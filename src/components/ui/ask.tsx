@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowUp, Paperclip } from 'lucide-react';
+import { ArrowUp } from "@/components/animate-ui/icons/arrow-up";
 
 export function Ask() {
     const [input, setInput] = useState("")
@@ -59,7 +59,7 @@ export function Ask() {
                             ${input.length > 0 ? 'text-neutral-800' : 'text-neutral-700'}
                             ${input.length > 0 ? 'hover:bg-neutral-50' : 'hover:bg-neutral-50/50'}
                         `}>
-                        <ArrowUp className="w-3 h-3" />
+                        <ArrowUp className="w-3 h-3" animation="out" animateOnHover />
                     </Button>
                 </div>
             </div>
