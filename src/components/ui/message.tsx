@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -14,6 +14,7 @@ export function Message() {
     const { messages } = useConversationStore();
     const [name, setName] = useState("User");
     const [copiedStates, setCopiedStates] = useState<Record<string, boolean>>({})
+    const bottomRef = useRef<HTMLDivElement>(null);
 
     const getNameFromCookie = () => {
         const match = document.cookie.match(new RegExp('(^| )name=([^;]+)'));
@@ -43,6 +44,10 @@ export function Message() {
             window.removeEventListener('focus', handleStorageChange);
         };
     }, [name]);
+
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
 
     const handleCopy = (text: string) => {
         navigator.clipboard.writeText(text)
@@ -304,6 +309,8 @@ export function Message() {
                         );
                     }
                 })}
+
+                <div ref={bottomRef} />
             </div>
         </>
     )
