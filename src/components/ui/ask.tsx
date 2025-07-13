@@ -18,7 +18,7 @@ const placeholders = [
 ];
 
 export function Ask() {
-    const { addMessage } = useConversationStore();
+    const { addMessage, removeThinkingMessage } = useConversationStore();
     const [input, setInput] = useState("");
     const [currentPlaceholder, setCurrentPlaceholder] = useState("");
     const [placeholderIndex, setPlaceholderIndex] = useState(0);
@@ -100,6 +100,7 @@ export function Ask() {
 
         const messageToSend = input;
         addMessage(messageToSend, "user");
+        addMessage("考えています・・・🤔", "ai", true);
         setInput("");
 
         try {
@@ -116,6 +117,7 @@ export function Ask() {
 
             if (response.ok) {
                 const data = await response.json();
+                removeThinkingMessage();
                 addMessage(data.result, "ai");
             } else {
                 console.error("API request failed");
@@ -151,6 +153,7 @@ export function Ask() {
                     setPendingMessage(null);
 
                     addMessage(messageToSend, "user");
+                    addMessage("考えています…", "ai", true);
                     setInput("");
 
                     try {
@@ -167,6 +170,7 @@ export function Ask() {
 
                         if (response.ok) {
                             const data = await response.json();
+                            removeThinkingMessage();
                             addMessage(data.result, "ai");
                         } else {
                             const errorText = await response.text();

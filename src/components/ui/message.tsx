@@ -216,8 +216,8 @@ export function Message() {
 
                                 <div className="flex flex-col max-w-[70%] items-end">
                                     <div className="flex items-center gap-2 mb-1 flex-row-reverse">
-                                        <span className="text-sm font-medium text-gray-700">ユーザー</span>
                                         <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                        <span className="text-sm font-medium text-gray-700">{name}</span>
                                     </div>
 
                                     <div className="flex justify-center rounded-2xl px-4 py-2 bg-neutral-900/2 text-neutral-900 rounded-br-md">
