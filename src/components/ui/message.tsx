@@ -1,18 +1,48 @@
 "use client"
 
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { UserRound, Share2, PencilLine, RefreshCcw, Check, Copy } from "lucide-react"
+import { UserRound, Share2, PencilLine, Search, Check, Copy } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "sonner"
 import { useConversationStore } from '@/store/conversation';
 
 export function Message() {
     const { messages } = useConversationStore();
+    const [name, setName] = useState("User");
     const [copiedStates, setCopiedStates] = useState<Record<string, boolean>>({})
+
+    const getNameFromCookie = () => {
+        const match = document.cookie.match(new RegExp('(^| )name=([^;]+)'));
+        if (match) {
+            return decodeURIComponent(match[2]);
+        }
+        return "User";
+    }
+
+    useEffect(() => {
+        setName(getNameFromCookie());
+    }, []);
+
+    useEffect(() => {
+        const handleStorageChange = () => {
+            const currentName = getNameFromCookie();
+            if (currentName !== name) {
+                setName(currentName);
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        window.addEventListener('focus', handleStorageChange);
+
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+            window.removeEventListener('focus', handleStorageChange);
+        };
+    }, [name]);
 
     const handleCopy = (text: string) => {
         navigator.clipboard.writeText(text)
@@ -28,7 +58,7 @@ export function Message() {
     return (
         <>
             <div className={`${messages.length === 0 ? "block" : "hidden"} text-center text-gray-500 py-20`}>
-                <h1 className="text-neutral-500 text-4xl font-semibold text-center">Hi, Rion</h1>
+                <h1 className="text-neutral-500 text-4xl font-semibold text-center">Hi, {name}</h1>
 
                 <div className="pt-10 grid grid-cols-1 gap-6 md:grid-cols-3 md:grid-rows-2 h-150">
                     <Card className="rounded-4xl md:col-span-2 md:row-span-2 border-0 shadow-none overflow-hidden">
@@ -195,22 +225,27 @@ export function Message() {
                                     </div>
 
                                     <div className="flex items-center gap-x-1 mt-2.5">
-                                        <Button
-                                            onClick={() => handleCopy(message.content)}
-                                            className="hover:bg-neutral-900/3 size-7 transition-all duration-200"
-                                            size="icon"
-                                            variant="ghost"
-                                        >
-                                            <div className="relative">
-                                                <Copy
-                                                    className={`transition-all duration-200 ${isCopied ? "opacity-0 scale-75" : "opacity-100 scale-100"}`}
-                                                />
-                                                <Check
-                                                    className={`absolute inset-0 transition-all duration-200 text-green-600 ${isCopied ? "opacity-100 scale-100" : "opacity-0 scale-75"}`}
-                                                />
-                                            </div>
-                                        </Button>
-                                        <Button className="hover:bg-neutral-900/3 size-7" size="icon" variant="ghost"><PencilLine /></Button>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button onClick={() => handleCopy(message.content)} className="hover:bg-neutral-900/3 size-7 transition-all duration-200" size="icon" variant="ghost">
+                                                    <div className="relative">
+                                                        <Copy className={`transition-all duration-200 ${isCopied ? "opacity-0 scale-75" : "opacity-100 scale-100"}`} />
+                                                        <Check className={`absolute inset-0 transition-all duration-200 ${isCopied ? "opacity-100 scale-100" : "opacity-0 scale-75"}`} />
+                                                    </div>
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>コピー</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button className="hover:bg-neutral-900/3 size-7" size="icon" variant="ghost"><PencilLine /></Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>編集</p>
+                                            </TooltipContent>
+                                        </Tooltip>
                                     </div>
                                 </div>
                             </div>
@@ -234,9 +269,35 @@ export function Message() {
                                     </div>
 
                                     <div className="flex items-center gap-x-1 mt-2.5">
-                                        <Button onClick={() => handleCopy(message.content)} className="hover:bg-neutral-900/3 size-7" size="icon" variant="ghost"><Copy /></Button>
-                                        <Button className="hover:bg-neutral-900/3 size-7" size="icon" variant="ghost"><RefreshCcw /></Button>
-                                        <Button className="hover:bg-neutral-900/3 size-7" size="icon" variant="ghost"><Share2 /></Button>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button onClick={() => handleCopy(message.content)} className="hover:bg-neutral-900/3 size-7 transition-all duration-200" size="icon" variant="ghost">
+                                                    <div className="relative">
+                                                        <Copy className={`transition-all duration-200 ${isCopied ? "opacity-0 scale-75" : "opacity-100 scale-100"}`} />
+                                                        <Check className={`absolute inset-0 transition-all duration-200 ${isCopied ? "opacity-100 scale-100" : "opacity-0 scale-75"}`} />
+                                                    </div>
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>コピー</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button className="hover:bg-neutral-900/3 size-7" size="icon" variant="ghost"><Search /></Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>ファクトチェック</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button className="hover:bg-neutral-900/3 size-7" size="icon" variant="ghost"><Share2 /></Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>共有</p>
+                                            </TooltipContent>
+                                        </Tooltip>
                                     </div>
                                 </div>
                             </div>

@@ -1,5 +1,4 @@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
 
 export function TermsAlert({ open, onOpenChange, onAgreed, onDeclined }: { open: boolean, onOpenChange: (open: boolean) => void, onAgreed: () => void, onDeclined: () => void }) {
     return (

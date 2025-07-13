@@ -3,7 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useConversationStore } from '@/store/conversation';
+import { toast } from "sonner";
 import { TermsAlert } from '@/components/ui/terms';
+import { NameDialog } from '@/components/ui/name';
 import { ArrowUp, Key } from "lucide-react"
 
 const placeholders = [
@@ -23,7 +25,9 @@ export function Ask() {
     const [charIndex, setCharIndex] = useState(0);
     const [isDeleting, setIsDeleting] = useState(false);
     const [authenticated, setAuthenticated] = useState(false);
+    const [name, setName] = useState<string | null>(null);
     const [showTerms, setShowTerms] = useState(false);
+    const [showNameDialog, setShowNameDialog] = useState(false);
     const [pendingMessage, setPendingMessage] = useState<string | null>(null);
     const [loadingAuth, setLoadingAuth] = useState(true);
 
@@ -39,6 +43,19 @@ export function Ask() {
             })
             .catch(() => setLoadingAuth(false));
     }, []);
+
+    useEffect(() => {
+        if (authenticated) {
+            const savedName = document.cookie.split(';').find(row => row.trim().startsWith('name='));
+            if (savedName) {
+                const nameValue = savedName.split('=')[1];
+                const decodedName = decodeURIComponent(nameValue);
+                setName(decodedName);
+            } else {
+                setShowNameDialog(true);
+            }
+        }
+    }, [authenticated]);
 
     useEffect(() => {
         const currentText = placeholders[placeholderIndex];
@@ -76,6 +93,11 @@ export function Ask() {
             return;
         }
 
+        if (!name) {
+            setShowNameDialog(true);
+            return;
+        }
+
         const messageToSend = input;
         addMessage(messageToSend, "user");
         setInput("");
@@ -88,6 +110,7 @@ export function Ask() {
                 },
                 body: JSON.stringify({
                     message: messageToSend,
+                    model: "yajuu",
                 }),
             });
 
@@ -96,9 +119,11 @@ export function Ask() {
                 addMessage(data.result, "ai");
             } else {
                 console.error("API request failed");
+                toast.error("APIリクエストに失敗しました。しばらくしてから再度お試しください。");
             }
         } catch (error) {
             console.error("Error during API request:", error);
+            toast.error("リクエスト処理中にエラーが発生しました。再度お試しください。");
         }
     };
 
@@ -136,6 +161,7 @@ export function Ask() {
                             },
                             body: JSON.stringify({
                                 message: messageToSend,
+                                model: "yajuu",
                             }),
                         });
 
@@ -143,17 +169,22 @@ export function Ask() {
                             const data = await response.json();
                             addMessage(data.result, "ai");
                         } else {
-                            console.error("API request failed");
+                            const errorText = await response.text();
+                            console.error("API request failed with status:", response.status, "Error:", errorText);
+                            toast.error("APIリクエストに失敗しました。しばらくしてから再度お試しください。");
                         }
                     } catch (error) {
                         console.error("Error during API request:", error);
+                        toast.error("リクエスト処理中にエラーが発生しました。再度お試しください。");
                     }
                 }
             } else {
                 console.error("Auth failed");
+                toast.error("認証に失敗しました。再度お試しください。");
             }
         } catch (e) {
             console.error(e);
+            toast.error("認証に失敗しました。再度お試しください。");
         } finally {
             setLoadingAuth(false);
         }
@@ -196,6 +227,7 @@ export function Ask() {
             </div>
 
             <TermsAlert open={showTerms} onOpenChange={setShowTerms} onAgreed={handleAgree} onDeclined={() => setShowTerms(false)} />
+            <NameDialog open={showNameDialog} onClose={() => setShowNameDialog(false)} onSave={(newName: string) => { document.cookie = `name=${encodeURIComponent(newName)}; path=/; max-age=${60 * 60 * 24 * 365}`; setName(newName); setShowNameDialog(false); }} />
 
             {loadingAuth && <>
                 <div className="fixed inset-0 flex flex-col items-center justify-center bg-white/90 text-neutral-800 text-center px-4">
