@@ -9,6 +9,7 @@ import { UserRound, Share2, PencilLine, Search, Check, Copy } from "lucide-react
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "sonner"
 import { useConversationStore } from '@/store/conversation';
+import { MarkdownRenderer } from '@/components/renderer/markdown';
 
 export function Message() {
     const { messages } = useConversationStore();
@@ -226,7 +227,7 @@ export function Message() {
                                     </div>
 
                                     <div className="flex justify-center rounded-2xl px-4 py-2 bg-neutral-900/2 text-neutral-900 rounded-br-md">
-                                        <p className="text-sm text-right leading-relaxed">{message.content}</p>
+                                        <MarkdownRenderer content={message.content} textAlign="right" className="text-sm" theme="light" />
                                     </div>
 
                                     <div className="flex items-center gap-x-1 mt-2.5">
@@ -270,7 +271,7 @@ export function Message() {
                                     </div>
 
                                     <div className="flex justify-center rounded-2xl px-4 py-2 bg-neutral-900/2 text-neutral-900 rounded-br-md">
-                                        <p className="text-sm text-left leading-relaxed">{message.content}</p>
+                                        <MarkdownRenderer content={message.content} textAlign="left" className="text-sm" theme="light" />
                                     </div>
 
                                     <div className="flex items-center gap-x-1 mt-2.5">
