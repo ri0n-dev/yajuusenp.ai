@@ -14,7 +14,7 @@ export function Info() {
                 <DialogHeader>
                     <DialogTitle>Yajuusenp.AI</DialogTitle>
                     <p className="text-sm text-neutral-800">このサイトは野獣先輩と会話するという夢を持っている人たちのために作られました。
-                        GPT-4oを使用して動いています。何か問題や要望、ご意見などあれば<a href="https://discord.gg/teamzistyi" target="_blank" rel="noopener noreferrer" className="text-primary underline">Discord</a>からお願いします</p>
+                        GPT-4oを使用して動いています。何か問題や要望、ご意見などあれば<a href="https://discord.gg/teamzisty" target="_blank" rel="noopener noreferrer" className="text-primary underline">Discord</a>からお願いします</p>
 
                     <div className="mt-3">
                         <h3 className="text-base font-semibold mb-1">Project Member</h3>

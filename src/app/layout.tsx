@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
+import { Toaster } from "sonner"
 import "@/styles/globals.css";
 
 const notoSansJP = Noto_Sans_JP({
@@ -21,6 +22,8 @@ export default function RootLayout({
     <html lang="ja">
       <body className={`${notoSansJP.variable} font-(family-name:--font-noto-sans-jp) antialiased bg-neutral-100`}>
         {children}
+
+        <Toaster className="shadow-none border border-neutral-200" position="top-center" />
       </body>
     </html>
   );
