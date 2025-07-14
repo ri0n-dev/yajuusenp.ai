@@ -100,12 +100,13 @@ export async function POST(req: NextRequest) {
         })
 
         return NextResponse.json({ result: summary.choices[0].message.content, optimized, langSearchJson })
-    } catch (error: any) {
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
         console.error("Error in fact check API:", error)
         return NextResponse.json(
             {
                 error: "Internal server error",
-                details: error.message || "Unknown error occurred"
+                details: errorMessage
             },
             { status: 500 }
         )

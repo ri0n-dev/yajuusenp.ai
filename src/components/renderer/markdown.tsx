@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { memo } from "react"
+import { memo, ReactNode } from "react"
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import { oneLight, oneDark } from "react-syntax-highlighter/dist/esm/styles/prism"
@@ -62,8 +62,7 @@ export const MarkdownRenderer = memo(({ content, className = "", theme = "light"
         <div className={`markdown-renderer ${className}`}>
             <ReactMarkdown
                 components={{
-                    code(props: any) {
-                        const { node, inline, className, children, ...rest } = props
+                    code({ node, inline, className, children, ...rest }: { node?: any, inline?: boolean, className?: string, children?: ReactNode }) {
                         const match = /language-(\w+)/.exec(className || "")
                         const code = String(children).replace(/\n$/, "")
                         return !inline && match ? (
@@ -74,94 +73,44 @@ export const MarkdownRenderer = memo(({ content, className = "", theme = "light"
                             </code>
                         )
                     },
-                    p(props: any) {
-                        const { children } = props
-                        return <p className={`mb-3 last:mb-0 text-${textAlign} leading-relaxed`}>{children}</p>
+                    p(props: React.HTMLAttributes<HTMLParagraphElement>) {
+                        return <p {...props} className={`mb-3 last:mb-0 text-${textAlign} leading-relaxed`} />
+                    },                
+                    ul(props: React.HTMLAttributes<HTMLUListElement>) {
+                        return <ul {...props} className={`list-disc list-inside mb-4 space-y-1 text-${textAlign} pl-4`} />
+                    },                 
+                    ol(props: React.OlHTMLAttributes<HTMLOListElement>) {
+                        return <ol {...props} className={`list-decimal list-inside mb-4 space-y-1 text-${textAlign} pl-4`} />
+                    },                 
+                    li(props: React.LiHTMLAttributes<HTMLLIElement>) {
+                        return <li {...props} className="leading-relaxed" />
                     },
-                    ul(props: any) {
-                        const { children } = props
-                        return <ul className={`list-disc list-inside mb-4 space-y-1 text-${textAlign} pl-4`}>{children}</ul>
+                    a(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+                        return <a {...props} className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline underline-offset-2" />
                     },
-                    ol(props: any) {
-                        const { children } = props
-                        return <ol className={`list-decimal list-inside mb-4 space-y-1 text-${textAlign} pl-4`}>{children}</ol>
+                    blockquote(props: React.BlockquoteHTMLAttributes<HTMLQuoteElement>) {
+                        return <blockquote {...props} className="border-l-4 border-neutral-300 dark:border-neutral-600 pl-4 py-1 my-2 text-neutral-600 dark:text-neutral-300" />
+                    },                    
+                    del(props: React.DelHTMLAttributes<HTMLModElement>) {
+                        return <del {...props} className="line-through" />
                     },
-                    li(props: any) {
-                        const { children } = props
-                        return <li className="leading-relaxed">{children}</li>
+                    table(props: React.TableHTMLAttributes<HTMLTableElement>) {
+                        return <div className="overflow-x-auto my-4"><table {...props} className="min-w-full divide-y divide-neutral-200 dark:divide-neutral-700" /></div>
+                    },              
+                    thead(props: React.HTMLAttributes<HTMLTableSectionElement>) {
+                        return <thead {...props} className="bg-neutral-50 dark:bg-neutral-800" />
                     },
-                    a(props: any) {
-                        const { children, href } = props
-                        return (
-                            <a href={href} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:underline-offset-4 transition-all duration-200">
-                                {children}
-                            </a>
-                        )
+                    tbody(props: React.HTMLAttributes<HTMLTableSectionElement>) {
+                        return <tbody {...props} className="divide-y divide-neutral-200 dark:divide-neutral-700" />
                     },
-                    blockquote(props: any) {
-                        const { children } = props
-                        return (
-                            <blockquote className="border-l-4 border-blue-500 pl-4 py-2 my-4 italic text-neutral-700 dark:text-neutral-300 bg-neutral-50 dark:bg-neutral-800/50 rounded-r-lg">
-                                {children}
-                            </blockquote>
-                        )
+                    tr(props: React.HTMLAttributes<HTMLTableRowElement>) {
+                        return <tr {...props} className="hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors" />
                     },
-                    strong(props: any) {
-                        const { children } = props
-                        return <strong className="font-semibold text-neutral-900 dark:text-neutral-100">{children}</strong>
+                    th(props: React.ThHTMLAttributes<HTMLTableHeaderCellElement>) {
+                        return <th {...props} className="px-6 py-3 text-left text-xs font-medium text-neutral-500 dark:text-neutral-400 uppercase tracking-wider" />
                     },
-                    em(props: any) {
-                        const { children } = props
-                        return <em className="italic text-neutral-800 dark:text-neutral-200">{children}</em>
-                    },
-                    del(props: any) {
-                        const { children } = props
-                        return <del className="line-through text-neutral-500 dark:text-neutral-400">{children}</del>
-                    },
-                    hr() {
-                        return <hr className="border-neutral-300 dark:border-neutral-600 my-6" />
-                    },
-                    table(props: any) {
-                        const { children } = props
-                        return (
-                            <div className="overflow-x-auto my-4">
-                                <table className="min-w-full border-collapse border border-neutral-300 dark:border-neutral-600 rounded-lg overflow-hidden">
-                                    {children}
-                                </table>
-                            </div>
-                        )
-                    },
-                    thead(props: any) {
-                        const { children } = props
-                        return <thead className="bg-neutral-50 dark:bg-neutral-800">{children}</thead>
-                    },
-                    tbody(props: any) {
-                        const { children } = props
-                        return <tbody className="bg-white dark:bg-neutral-900">{children}</tbody>
-                    },
-                    tr(props: any) {
-                        const { children } = props
-                        return (
-                            <tr className="border-b border-neutral-200 dark:border-neutral-700 hover:bg-neutral-50 dark:hover:bg-neutral-800/50 transition-colors duration-150">
-                                {children}
-                            </tr>
-                        )
-                    },
-                    th(props: any) {
-                        const { children } = props
-                        return (
-                            <th className="border border-neutral-300 dark:border-neutral-600 px-4 py-3 text-left font-semibold text-neutral-900 dark:text-neutral-100 bg-neutral-100 dark:bg-neutral-700">
-                                {children}
-                            </th>
-                        )
-                    },
-                    td(props: any) {
-                        const { children } = props
-                        return (
-                            <td className="border border-neutral-300 dark:border-neutral-600 px-4 py-3 text-neutral-700 dark:text-neutral-300">
-                                {children}
-                            </td>
-                        )
+                    td(props: React.TdHTMLAttributes<HTMLTableDataCellElement>) {
+                        return <td {...props} className="px-6 py-4 whitespace-nowrap text-sm text-neutral-900 dark:text-neutral-100" />
                     },
                 }}
             >

@@ -11,19 +11,17 @@ export function FactCheck({ open, onOpenChange, content, onResult, cachedResult 
     const [result, setResult] = useState("")
 
     useEffect(() => {
-        if (!open || !content) return
-
-        if (cachedResult) {
-            setResult(cachedResult)
-            return
-        }
-
         const run = async () => {
-            setChecking(true)
-            setResult("")
+            if (!open || !content) return
+            if (cachedResult) {
+                setResult(cachedResult)
+                onResult(cachedResult)
+                return
+            }
 
+            setChecking(true)
             try {
-                const res = await fetch("api/factcheck/", {
+                const res = await fetch("/api/factcheck", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -43,7 +41,7 @@ export function FactCheck({ open, onOpenChange, content, onResult, cachedResult 
         }
 
         run()
-    }, [open, content])
+    }, [open, content, cachedResult, onOpenChange, onResult])
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

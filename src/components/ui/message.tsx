@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { UserRound, Share2, Trash, Search, SearchCheck, Check, Copy } from "lucide-react"
+import { UserRound, Share2, Search, SearchCheck, Check, Copy } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "sonner"
 import { useConversationStore } from '@/store/conversation';
