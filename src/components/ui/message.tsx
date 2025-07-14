@@ -5,17 +5,27 @@ import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { UserRound, Share2, PencilLine, Search, Check, Copy } from "lucide-react"
+import { UserRound, Share2, Trash, Search, SearchCheck, Check, Copy } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "sonner"
 import { useConversationStore } from '@/store/conversation';
 import { MarkdownRenderer } from '@/components/renderer/markdown';
+import { FactCheck } from "@/components/ui/factcheck"
+import { ShareDialog } from "@/components/ui/share"
 
 export function Message() {
     const { messages } = useConversationStore();
     const [name, setName] = useState("User");
     const [copiedStates, setCopiedStates] = useState<Record<string, boolean>>({})
+    const [copiedLocks, setCopiedLocks] = useState<Record<string, boolean>>({})
     const bottomRef = useRef<HTMLDivElement>(null);
+    const [factTarget, setFactTarget] = useState("")
+    const [factChecked, setFactChecked] = useState<Record<string, string>>({})
+    const [isFactOpen, setIsFactOpen] = useState(false)
+    const [shareUrl, setShareUrl] = useState("")
+    const [isShareOpen, setIsShareOpen] = useState(false)
+
+    const isThinking = messages.some(m => m.content === "考えています・・・🤔" && m.sender.role === "ai");
 
     const getNameFromCookie = () => {
         const match = document.cookie.match(new RegExp('(^| )name=([^;]+)'));
@@ -51,13 +61,17 @@ export function Message() {
     }, [messages]);
 
     const handleCopy = (text: string) => {
+        if (copiedLocks[text]) return
+
         navigator.clipboard.writeText(text)
         toast.success("クリップボードにコピーしました！")
 
         setCopiedStates((prev) => ({ ...prev, [text]: true }))
+        setCopiedLocks((prev) => ({ ...prev, [text]: true }))
 
         setTimeout(() => {
             setCopiedStates((prev) => ({ ...prev, [text]: false }))
+            setCopiedLocks((prev) => ({ ...prev, [text]: false }))
         }, 2000)
     }
 
@@ -244,14 +258,6 @@ export function Message() {
                                                 <p>コピー</p>
                                             </TooltipContent>
                                         </Tooltip>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Button className="hover:bg-neutral-900/3 size-7" size="icon" variant="ghost"><PencilLine /></Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>編集</p>
-                                            </TooltipContent>
-                                        </Tooltip>
                                     </div>
                                 </div>
                             </div>
@@ -277,7 +283,7 @@ export function Message() {
                                     <div className="flex items-center gap-x-1 mt-2.5">
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <Button onClick={() => handleCopy(message.content)} className="hover:bg-neutral-900/3 size-7 transition-all duration-200" size="icon" variant="ghost">
+                                                <Button disabled={isThinking} onClick={() => handleCopy(message.content)} className="hover:bg-neutral-900/3 size-7 transition-all duration-200" size="icon" variant="ghost">
                                                     <div className="relative">
                                                         <Copy className={`transition-all duration-200 ${isCopied ? "opacity-0 scale-75" : "opacity-100 scale-100"}`} />
                                                         <Check className={`absolute inset-0 transition-all duration-200 ${isCopied ? "opacity-100 scale-100" : "opacity-0 scale-75"}`} />
@@ -290,7 +296,7 @@ export function Message() {
                                         </Tooltip>
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <Button className="hover:bg-neutral-900/3 size-7" size="icon" variant="ghost"><Search /></Button>
+                                                <Button disabled={isThinking} onClick={() => (setFactTarget(message.content), setIsFactOpen(true))} className="hover:bg-neutral-900/3 size-7" size="icon" variant="ghost">{factChecked[message.content] ? <SearchCheck /> : <Search />}</Button>
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 <p>ファクトチェック</p>
@@ -298,7 +304,33 @@ export function Message() {
                                         </Tooltip>
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <Button className="hover:bg-neutral-900/3 size-7" size="icon" variant="ghost"><Share2 /></Button>
+                                                <Button
+                                                    disabled={isThinking}
+                                                    onClick={async () => {
+                                                        const jsonStr = JSON.stringify(messages.map(m => ({ role: m.sender.role, model: "Yajuu 4o", timestamp: m.timestamp, content: m.content })))
+
+                                                        const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, ["encrypt"])
+                                                        const rawKey = await crypto.subtle.exportKey("raw", key)
+                                                        const keyStr = btoa(String.fromCharCode(...new Uint8Array(rawKey)))
+
+                                                        const iv = crypto.getRandomValues(new Uint8Array(12))
+                                                        const encoded = new TextEncoder().encode(jsonStr)
+                                                        const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoded)
+                                                        const combined = new Uint8Array(iv.length + encrypted.byteLength)
+                                                        combined.set(iv)
+                                                        combined.set(new Uint8Array(encrypted), iv.length)
+                                                        const encryptedStr = btoa(String.fromCharCode(...combined))
+
+                                                        const url = `${location.origin}/share?d=${encodeURIComponent(encryptedStr)}&k=${encodeURIComponent(keyStr)}`
+                                                        setShareUrl(url)
+                                                        setIsShareOpen(true)
+                                                    }}
+                                                    className="hover:bg-neutral-900/3 size-7"
+                                                    size="icon"
+                                                    variant="ghost"
+                                                >
+                                                    <Share2 />
+                                                </Button>
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 <p>共有</p>
@@ -311,6 +343,8 @@ export function Message() {
                     }
                 })}
 
+                <FactCheck open={isFactOpen} onOpenChange={(open) => { if (!open) setFactTarget(""); setIsFactOpen(open) }} content={factTarget} onResult={(result) => { setFactChecked((prev) => ({ ...prev, [factTarget]: result })) }} cachedResult={factChecked[factTarget]} />
+                <ShareDialog open={isShareOpen} onOpenChange={setIsShareOpen} url={shareUrl} />
                 <div ref={bottomRef} />
             </div>
         </>

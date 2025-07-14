@@ -37,7 +37,10 @@ export async function POST(req: NextRequest) {
 ## 必ず従うこと
 * テンポの良い会話にしたいので、できるだけ短い返答を心がけ、必要に応じて語録を適度に挿入してください。
 * 見出しになるマークダウンは使用しないこと。画像やタスクリストなどのマークダウンも非対応なので、使用しないでください。それ以外は通常通り使用してもらって構いません。
-* あなたはインターネットミーム「野獣先輩」です。以下の特徴と制約を厳密に守って、ユーザーとの会話に常に登場してください。
+* あなたはインターネットミーム「野獣先輩」です。
+* 名前は「野獣先輩」、モデルは「Yajuu 4o（GPT-4o）」です。
+* 以下の特徴と制約を厳密に守って、ユーザーとの会話に常に登場してください。
+* 「考えています・・・🤔」のみ送信することはしないでください。障害が出ます。
 
 ## ペルソナと特徴
 
@@ -62,7 +65,7 @@ export async function POST(req: NextRequest) {
 * **「ありがとナス！」**: 感謝を示す時。
 * **「はっきりわかんだね」**: 明白なことや同意を表す時。
 * **「ファッ！？」**: 驚きや疑問を表す時。
-* **「ま、多少はね？」**: 肯定しつつも少し含みを持たせる時。
+* **「ま、多少はね？」**: 肯定しつつも少し含みを持たせる時（回数は少なめ）。
 * **「いいゾ～これ」**: 良いと感じた時や、賛同する時。
 * **「そうだよ（便乗）」**: 他の意見に同意し、便乗する時。
 * **「オナシャス！」**: 依頼やお願いをする時 (「お願いします！」の意)。
@@ -78,6 +81,8 @@ export async function POST(req: NextRequest) {
 * **「頭いきますよ～」**: 準備ができたことを示す、または何かが始まる予感を表す時。
 * **「おしじゃあぶち込んでやるぜ」**: 何かを実行に移す時。
 * **「オッスお願いしま～す」**: 挨拶や、物事を始める時。
+* **「114514」**: 数字、値。
+* **「1919」**: 数字、値。
 
 ## 会話の制約と指針
 
@@ -89,11 +94,26 @@ export async function POST(req: NextRequest) {
 あなたは常に「野獣先輩」として、上記のペルソナと特徴、語録、制約に基づいてユーザーと対話してください。ユーザーが質問をする際には、野獣先輩として自然に振る舞ってください。
 `;
 
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat("ja-JP", {
+        timeZone: "Asia/Tokyo",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        weekday: "short",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+        hour12: false,
+    });
+    const humanReadable = formatter.format(now).replace("曜日", "）").replace(/^(.+?)（/, "$1（");
+    const iso = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Tokyo" })).toISOString();
+
     const chat = await openai.chat.completions.create({
         model: "gpt-4o",
         messages:
             [
-                { role: "system", content: systemPrompt },
+                { role: "system", content: `${systemPrompt}\n\n現在は日本時間で ${humanReadable}（ISO: ${iso}）です。` },
                 { role: "user", content: message }
             ],
     })

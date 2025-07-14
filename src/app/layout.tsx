@@ -13,11 +13,7 @@ export const metadata: Metadata = {
   description: "Would you like to talk with Yaju Senpai, Koji Tadokoro? If so, be sure to check it out!",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ja">
       <body className={`${notoSansJP.variable} font-(family-name:--font-noto-sans-jp) antialiased bg-neutral-100`}>

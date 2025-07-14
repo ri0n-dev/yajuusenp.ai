@@ -41,15 +41,15 @@ export async function POST(req: Request) {
     .setExpirationTime("30d")
     .sign(SECRET)
 
-  const response = NextResponse.json({ ok: true, authenticated: true })
-  response.cookies.set("auth_token", jwt, {
+  const res = NextResponse.json({ ok: true, authenticated: true })
+  res.cookies.set("auth_token", jwt, {
     httpOnly: true,
     secure: true,
     sameSite: "lax",
     path: "/",
     maxAge: 60 * 60 * 24 * 30,
   })
-  response.cookies.set("nonce", "", { maxAge: 0, path: "/" })
+  res.cookies.set("nonce", "", { maxAge: 0, path: "/" })
 
-  return response
+  return res
 }

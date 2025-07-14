@@ -6,7 +6,7 @@ import { useConversationStore } from '@/store/conversation';
 import { toast } from "sonner";
 import { TermsAlert } from '@/components/ui/terms';
 import { NameDialog } from '@/components/ui/name';
-import { ArrowUp, Key } from "lucide-react"
+import { ArrowUp, Key, Loader } from "lucide-react"
 
 const placeholders = [
     "野獣先輩のアソコの長さを教えて",
@@ -30,6 +30,7 @@ export function Ask() {
     const [showNameDialog, setShowNameDialog] = useState(false);
     const [pendingMessage, setPendingMessage] = useState<string | null>(null);
     const [loadingAuth, setLoadingAuth] = useState(true);
+    const [isSending, setIsSending] = useState(false);
 
     useEffect(() => {
         fetch("/api/auth", { method: "POST", credentials: "include" })
@@ -98,13 +99,14 @@ export function Ask() {
             return;
         }
 
+        setIsSending(true);
         const messageToSend = input;
         addMessage(messageToSend, "user");
         addMessage("考えています・・・🤔", "ai", true);
         setInput("");
 
         try {
-            const response = await fetch("/api/chat", {
+            const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -115,8 +117,8 @@ export function Ask() {
                 }),
             });
 
-            if (response.ok) {
-                const data = await response.json();
+            if (res.ok) {
+                const data = await res.json();
                 removeThinkingMessage();
                 addMessage(data.result, "ai");
             } else {
@@ -126,6 +128,8 @@ export function Ask() {
         } catch (error) {
             console.error("Error during API request:", error);
             toast.error("リクエスト処理中にエラーが発生しました。再度お試しください。");
+        } finally {
+            setIsSending(false);
         }
     };
 
@@ -152,12 +156,13 @@ export function Ask() {
                     const messageToSend = pendingMessage;
                     setPendingMessage(null);
 
+                    setIsSending(true);
                     addMessage(messageToSend, "user");
-                    addMessage("考えています…", "ai", true);
+                    addMessage("考えています・・・🤔", "ai", true);
                     setInput("");
 
                     try {
-                        const response = await fetch("/api/chat", {
+                        const res = await fetch("/api/chat", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
@@ -168,13 +173,13 @@ export function Ask() {
                             }),
                         });
 
-                        if (response.ok) {
-                            const data = await response.json();
+                        if (res.ok) {
+                            const data = await res.json();
                             removeThinkingMessage();
                             addMessage(data.result, "ai");
                         } else {
-                            const errorText = await response.text();
-                            console.error("API request failed with status:", response.status, "Error:", errorText);
+                            const errorText = await res.text();
+                            console.error("API request failed with status:", res.status, "Error:", errorText);
                             toast.error("APIリクエストに失敗しました。しばらくしてから再度お試しください。");
                         }
                     } catch (error) {
@@ -191,6 +196,7 @@ export function Ask() {
             toast.error("認証に失敗しました。再度お試しください。");
         } finally {
             setLoadingAuth(false);
+            setIsSending(false);
         }
     };
 
@@ -213,17 +219,18 @@ export function Ask() {
                             placeholder={currentPlaceholder}
                             className="w-full px-2 py-2 border-0 focus:outline-none resize-none text-neutral-900 placeholder-neutral-400 leading-6 min-h-[2.5rem] max-h-[150px] overflow-y-auto"
                             rows={1}
+                            disabled={isSending}
                         />
                         <Button
                             className={`
-                            flex-shrink-0 w-10 h-10 rounded-full flex-grow bg-neutral-50/0 border hover:bg-neutral-100
-                            ${input.trim().length > 0 ? 'border-neutral-400/40 text-neutral-500/40' : 'border-neutral-300 text-neutral-400'}
-                            ${input.trim().length === 0 ? 'cursor-not-allowed' : ''}
-                        `}
-                            disabled={input.trim().length === 0}
+        flex-shrink-0 w-10 h-10 rounded-full flex-grow bg-neutral-50/0 border hover:bg-neutral-100
+        ${input.trim().length > 0 ? 'border-neutral-400/40 text-neutral-500/40' : 'border-neutral-300 text-neutral-400'}
+        ${(input.trim().length === 0 || isSending) ? 'cursor-not-allowed' : ''}
+    `}
+                            disabled={input.trim().length === 0 || isSending}
                             onClick={handleSubmit}
                         >
-                            <ArrowUp className="w-3 h-3" />
+                            {isSending ? <Loader className="w-4 h-4 animate-spin" /> : <ArrowUp className="w-3 h-3" />}
                         </Button>
                     </div>
                 </div>
