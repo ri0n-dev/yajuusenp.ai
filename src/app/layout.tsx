@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Noto_Sans_JP } from "next/font/google";
 import { Toaster } from "sonner"
 import "@/styles/globals.css";
@@ -8,6 +7,8 @@ export { metadata as metadata } from "@/consts/metadata";
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
   display: "swap",
+  subsets: ["latin"],
+  preload: true,
 });
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
