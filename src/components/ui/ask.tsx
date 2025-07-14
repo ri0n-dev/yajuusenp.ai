@@ -209,7 +209,7 @@ export function Ask() {
 
     return (
         <>
-            <div className="fixed bottom-0 left-0 right-0 mb-10 w-full max-w-4xl mx-auto">
+            <div className="fixed bottom-0 left-0 right-0 mb-10 w-full max-w-4xl px-3 mx-auto">
                 <div className="flex bg-white rounded-4xl border border-neutral-200/60 px-3 py-2">
                     <div className="flex w-full items-end justify-between gap-3">
                         <textarea
@@ -217,7 +217,7 @@ export function Ask() {
                             onChange={handleInput}
                             onKeyDown={handleKeyPress}
                             placeholder={currentPlaceholder}
-                            className="w-full px-2 py-2 border-0 focus:outline-none resize-none text-neutral-900 placeholder-neutral-400 leading-6 min-h-[2.5rem] max-h-[150px] overflow-y-auto"
+                            className="w-full px-2 py-2 border-0 focus:outline-none resize-none text-sm md:text-base text-neutral-900 placeholder-neutral-400 leading-6 min-h-[2.5rem] max-h-[150px] overflow-y-auto"
                             rows={1}
                             disabled={isSending}
                         />

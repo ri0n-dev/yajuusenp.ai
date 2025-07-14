@@ -4,11 +4,11 @@ import { Info } from '@/components/ui/info';
 
 export default function AIChatBar() {
   return (
-    <div className="w-full max-w-4xl mx-auto pb-32">
+    <>
       <div className="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-neutral-100 to-transparent"></div>
       <Message />
       <Ask />
       <Info />
-    </div>
+    </>
   );
 }

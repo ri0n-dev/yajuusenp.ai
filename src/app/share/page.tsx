@@ -57,9 +57,9 @@ export default function SharePage() {
     }
 
     return (
-        <div className="w-full max-w-4xl mx-auto py-10">
-            <div className="flex items-end gap-x-2">
-                <h1 className="text-neutral-700 text-3xl font-semibold text-left">会話履歴</h1>
+        <>
+            <div className="flex items-end gap-x-2 pt-10 md:pt-15">
+                <h1 className="text-neutral-700 text-2xl md:text-3xl font-semibold text-left">会話履歴</h1>
                 <div className="flex items-center gap-x-2">
                     <Badge variant="outline">
                         <Clock className="mr-1" />
@@ -78,22 +78,22 @@ export default function SharePage() {
                     return (
                         <div key={index} className={`flex gap-3 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
                             {isUser ? (
-                                <div className="flex items-center justify-center bg-neutral-50 rounded-full w-10 h-10 flex-shrink-0">
-                                    <UserRound size={20} />
+                                <div className="flex items-center justify-center bg-neutral-50 rounded-full w-8 h-8 md:w-10 md:h-10 flex-shrink-0">
+                                    <UserRound className="w-4 h-4 md:w-5 md:h-5" />
                                 </div>
                             ) : (
-                                <Avatar className="w-10 h-10 flex-shrink-0">
-                                    <AvatarImage src="/assets/yajuu.webp" alt="AI" />
-                                    <AvatarFallback>AI</AvatarFallback>
+                                <Avatar className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0">
+                                    <AvatarImage src={"/assets/yajuu.webp"} alt={"AI"} />
+                                    <AvatarFallback>{"AI"}</AvatarFallback>
                                 </Avatar>
                             )}
 
                             <div className={`flex flex-col max-w-[70%] ${isUser ? "items-end" : "items-start"}`}>
                                 <div className={`flex items-center gap-2 mb-1 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
-                                    <span className="text-sm font-medium text-gray-700">{isUser ? "ユーザー" : "野獣先輩"}</span>
+                                    <span className="text-xs md:text-sm font-medium text-gray-700">{isUser ? "ユーザー" : "野獣先輩"}</span>
                                 </div>
                                 <div className="flex justify-center rounded-2xl px-4 py-2 bg-neutral-900/2 text-neutral-900 rounded-br-md">
-                                    <p className={`text-sm leading-relaxed ${isUser ? "text-right" : "text-left"}`}>
+                                    <p className={`text-xs md:text-sm leading-relaxed ${isUser ? "text-right" : "text-left"}`}>
                                         {message.content}
                                     </p>
                                 </div>
@@ -102,6 +102,6 @@ export default function SharePage() {
                     )
                 })}
             </div>
-        </div>
+        </>
     )
 }

@@ -11,14 +11,14 @@ export function Info() {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Yajuusenp.AI</DialogTitle>
-                    <p className="text-sm text-neutral-800">このサイトは野獣先輩と会話するという夢を持っている人たちのために作られました。
+                    <DialogTitle className="text-left">Yajuusenp.AI</DialogTitle>
+                    <p className="text-sm text-neutral-800 text-left">このサイトは野獣先輩と会話するという夢を持っている人たちのために作られました。
                         GPT-4oを使用して動いています。何か問題や要望、ご意見などあれば<a href="https://discord.gg/teamzisty" target="_blank" rel="noopener noreferrer" className="text-primary underline">Discord</a>からお願いします</p>
 
-                    <div className="mt-3">
+                    <div className="mt-3 text-left">
                         <h3 className="text-base font-semibold mb-1">Project Member</h3>
                         <p className="text-xs text-neutral-800 mb-2">Zistyのメンバーによって開発されています。</p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
+                        <div className="grid grid-cols-2 gap-4 p-2">
                             <a href="https://github.com/ri0n-dev" target="_blank" rel="noopener noreferrer">
                                 <h4 className="font-medium text-sm mb-2">Rion</h4>
                                 <p className="text-xs text-muted-foreground leading-relaxed">設立者、開発者</p>
@@ -30,9 +30,9 @@ export function Info() {
                         </div>
                     </div>
 
-                    <div className="mt-3">
+                    <div className="mt-3 text-left">
                         <h3 className="text-base font-semibold mb-2">Special Thanks</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
+                        <div className="grid grid-cols-2 gap-4 p-2">
                             <a href="https://voids.top/" target="_blank" rel="noopener noreferrer">
                                 <h4 className="font-medium text-sm mb-2">Voids.top</h4>
                                 <p className="text-xs text-muted-foreground leading-relaxed">GPT-4oのAPIミラーを提供していただいています。</p>
