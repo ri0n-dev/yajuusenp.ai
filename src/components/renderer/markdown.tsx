@@ -62,7 +62,7 @@ export const MarkdownRenderer = memo(({ content, className = "", theme = "light"
         <div className={`markdown-renderer ${className}`}>
             <ReactMarkdown
                 components={{
-                    code({ node, inline, className, children, ...rest }: { node?: any, inline?: boolean, className?: string, children?: ReactNode }) {
+                    code({ inline, className, children, ...rest }: { inline?: boolean; className?: string; children?: ReactNode }) {
                         const match = /language-(\w+)/.exec(className || "")
                         const code = String(children).replace(/\n$/, "")
                         return !inline && match ? (
