@@ -9,7 +9,7 @@ export function TermsAlert({ open, onOpenChange, onAgreed, onDeclined }: { open:
                     <AlertDialogDescription className="flex flex-col gap-2">
                         <p>Yajuusenp.aiを利用する前に、以下の事項をご確認ください。</p>
                         <ul className="flex flex-col gap-1 list-decimal list-inside pt-1" style={{ textIndent: '-1.2em', paddingLeft: '1.2em' }}>
-                            <li><a href="/terms" target="_blank" rel="noopener noreferrer" className="underline cursor-pointer">利用規約</a>、<a href="/privacy" target="_blank" rel="noopener noreferrer" className="underline cursor-pointer">プライバシーポリシー</a>に同意する。</li>
+                            <li><a href="https://www.ri0n.dev/tos" target="_blank" rel="noopener noreferrer" className="underline cursor-pointer">利用規約</a>、<a href="https://www.ri0n.dev/privacy" target="_blank" rel="noopener noreferrer" className="underline cursor-pointer">プライバシーポリシー</a>に同意する。</li>
                             <li>ユーザーの会話内容が第三者に送信される可能性があることをご理解の上で、利用する。<span className="text-blue-500 cursor-pointer text-xs">※詳しく</span></li>
                             <li>AIの回答は正確でない。</li>
                         </ul>

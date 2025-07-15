@@ -39,7 +39,7 @@ export function Info() {
                             </a>
                             <a href="http://evex.land" target="_blank" rel="noopener noreferrer">
                                 <h4 className="font-medium text-sm mb-2">Evex Developers</h4>
-                                <p className="text-xs text-muted-foreground leading-relaxed">ドメイン料金を支払っていただいています。</p>
+                                <p className="text-xs text-muted-foreground leading-relaxed">スポンサーをしていただいています。</p>
                             </a>
                         </div>
                     </div>
