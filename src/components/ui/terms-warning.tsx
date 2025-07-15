@@ -1,5 +1,4 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 
 export function TermsWarning({ open, onOpenChange }: { open: boolean, onOpenChange: (v: boolean) => void }) {
     return (
