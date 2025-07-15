@@ -1,5 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { MoveUpRight } from "lucide-react"
 
 export function Info() {
     return (
@@ -20,11 +21,11 @@ export function Info() {
                         <p className="text-xs text-neutral-800 mb-2">Zistyのメンバーによって開発されています。</p>
                         <div className="grid grid-cols-2 gap-4 p-2">
                             <a href="https://github.com/ri0n-dev" target="_blank" rel="noopener noreferrer">
-                                <h4 className="font-medium text-sm mb-2">Rion</h4>
+                                <h4 className="flex items-center font-medium text-sm mb-2">Rion <MoveUpRight size={12} /></h4>
                                 <p className="text-xs text-muted-foreground leading-relaxed">設立者、開発者</p>
                             </a>
                             <a href="https://github.com/xxtomm" target="_blank" rel="noopener noreferrer">
-                                <h4 className="font-medium text-sm mb-2">Tom</h4>
+                                <h4 className="flex items-center font-medium text-sm mb-2">Tom <MoveUpRight size={12} /></h4>
                                 <p className="text-xs text-muted-foreground leading-relaxed">開発者、アイデア</p>
                             </a>
                         </div>
@@ -34,11 +35,11 @@ export function Info() {
                         <h3 className="text-base font-semibold mb-2">Special Thanks</h3>
                         <div className="grid grid-cols-2 gap-4 p-2">
                             <a href="https://voids.top/" target="_blank" rel="noopener noreferrer">
-                                <h4 className="font-medium text-sm mb-2">Voids.top</h4>
+                                <h4 className="flex items-center font-medium text-sm mb-2">Voids.top <MoveUpRight size={12} /></h4>
                                 <p className="text-xs text-muted-foreground leading-relaxed">GPT-4oのAPIミラーを提供していただいています。</p>
                             </a>
-                            <a href="http://evex.land" target="_blank" rel="noopener noreferrer">
-                                <h4 className="font-medium text-sm mb-2">Evex Developers</h4>
+                            <a href="https://evex.land" target="_blank" rel="noopener noreferrer">
+                                <h4 className="flex items-center font-medium text-sm mb-2">Evex Developers <MoveUpRight size={12} /></h4>
                                 <p className="text-xs text-muted-foreground leading-relaxed">スポンサーをしていただいています。</p>
                             </a>
                         </div>
