@@ -55,7 +55,7 @@ export function FactCheck({ open, onOpenChange, content, onResult, cachedResult 
                         {checking ? "チェック中・・・" : result}
                     </div>
 
-                    <Alert className="mt-5">
+                    <Alert className="mt-3">
                         <AlertCircleIcon />
                         <AlertTitle>ファクトチェックについて</AlertTitle>
                         <AlertDescription>

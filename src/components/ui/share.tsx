@@ -20,7 +20,7 @@ export function ShareDialog({ open, onOpenChange, url }: { open: boolean, onOpen
                     </Button>
                 </div>
 
-                <Alert className="mt-5">
+                <Alert className="mt-2">
                     <TriangleAlert />
                     <AlertTitle>注意</AlertTitle>
                     <AlertDescription>

@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
         return new NextResponse("Invalid model", { status: 400 })
     }
 
-    const systemPrompt = getSystemPrompt(model as ModelType);
+    const charaPrompt = getSystemPrompt(model as ModelType);
 
     const now = new Date();
     const formatter = new Intl.DateTimeFormat("ja-JP", {
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
         model: "gpt-4o",
         messages:
             [
-                { role: "system", content: `${systemPrompt}\n\n現在は日本時間で ${humanReadable}（ISO: ${iso}）です。` },
+                { role: "system", content: `${charaPrompt}\n\n現在は日本時間で ${humanReadable}（ISO: ${iso}）です。` },
                 { role: "user", content: message }
             ],
     })
