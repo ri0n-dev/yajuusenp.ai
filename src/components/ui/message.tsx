@@ -224,7 +224,7 @@ export function Message() {
                 </div>
             </div >
 
-            <div className={`${messages.length === 0 ? "hidden" : "block"} flex-1 overflow-y-auto py-10 space-y-4`}>
+            <div className={`${messages.length === 0 ? "hidden" : "block"} flex-1 overflow-y-auto py-10 space-y-4 relative`}>
                 {messages.map((message) => {
                     const isCopied = copiedStates[message.content] || false
                     if (message.sender.role === "user") {
@@ -346,6 +346,9 @@ export function Message() {
                 <FactCheck open={isFactOpen} onOpenChange={(open) => { if (!open) setFactTarget(""); setIsFactOpen(open) }} content={factTarget} onResult={(result) => { setFactChecked((prev) => ({ ...prev, [factTarget]: result })) }} cachedResult={factChecked[factTarget]} />
                 <ShareDialog open={isShareOpen} onOpenChange={setIsShareOpen} url={shareUrl} />
                 <div ref={bottomRef} />
+                
+                {/* Bottom fade gradient overlay */}
+                <div className="fixed bottom-0 left-0 right-0 h-32 pointer-events-none bg-gradient-to-t from-white via-white/80 to-transparent" />
             </div>
         </>
     )

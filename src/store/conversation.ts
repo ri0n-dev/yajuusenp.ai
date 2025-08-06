@@ -16,11 +16,13 @@ type ConversationState = {
   removeThinkingMessage: () => void;
 };
 
+let idCounter = 0;
+
 export const useConversationStore = create<ConversationState>((set) => ({
   messages: [],
   addMessage: (content, role, isThinking = false) => {
     const timestamp = new Date().toLocaleTimeString("ja-JP", { hour: '2-digit', minute: '2-digit' });
-    const id = Date.now().toString();
+    const id = `${Date.now()}-${++idCounter}`;
 
     set((state) => ({
       messages: [
