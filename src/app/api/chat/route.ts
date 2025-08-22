@@ -6,7 +6,7 @@ import { getSystemPrompt, type ModelType } from "@/prompts"
 const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET)
 
 const openai = new OpenAI({
-    baseURL: "https://capi.voids.top/v1/",
+    baseURL: "https://capi.voids.top/v2/",
     apiKey: "no_api_key_needed",
 })
 
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     const iso = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Tokyo" })).toISOString();
 
     const chat = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-5-2025-08-07",
         messages:
             [
                 { role: "system", content: `${charaPrompt}\n\n現在は日本時間で ${humanReadable}（ISO: ${iso}）です。` },

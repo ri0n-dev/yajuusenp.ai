@@ -1,6 +1,6 @@
-import { Message } from '@/components/ui/message';
-import { Ask } from '@/components/ui/ask';
-import { Info } from '@/components/ui/info';
+import { Message } from '@/components/message';
+import { Ask } from '@/components/ask';
+import { Info } from '@/components/info';
 
 export default function AIChatBar() {
   return (

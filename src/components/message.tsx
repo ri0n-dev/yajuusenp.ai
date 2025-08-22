@@ -240,7 +240,7 @@ export function Message() {
                                         <span className="text-xs text-gray-500">{message.timestamp}</span>
                                     </div>
 
-                                    <div className="flex justify-center rounded-2xl px-4 py-2 bg-neutral-900/2 text-neutral-900 rounded-br-md">
+                                    <div className="flex justify-center rounded-2xl px-4 py-2 bg-neutral-50 text-neutral-900 rounded-br-md">
                                         <MarkdownRenderer content={message.content} textAlign="right" className="text-sm" theme="light" />
                                     </div>
 
@@ -276,7 +276,7 @@ export function Message() {
                                         <span className="text-xs text-gray-500">{message.timestamp}</span>
                                     </div>
 
-                                    <div className="flex justify-center rounded-2xl px-4 py-2 bg-neutral-900/2 text-neutral-900 rounded-br-md">
+                                    <div className="flex justify-center rounded-2xl px-4 py-2 bg-neutral-50 text-neutral-900 rounded-br-md">
                                         <MarkdownRenderer content={message.content} textAlign="left" className="text-sm" theme="light" />
                                     </div>
 
