@@ -1,13 +1,16 @@
 import { yajuuSystemPrompt } from './yajuu';
+import { konaSystemPrompt } from './kona';
 
-export type ModelType = 'yajuu';
+export type PromptType = ['yajuu', 'kona'][number];
 
-export function getSystemPrompt(model: ModelType): string {
-  switch (model) {
+export function getSystemPrompt(prompt: PromptType): string {
+  switch (prompt) {
     case 'yajuu':
       return yajuuSystemPrompt;
+    case 'kona':
+      return konaSystemPrompt;
     default:
-      throw new Error(`Unknown model: ${model}`);
+      throw new Error(`Unknown prompt: ${prompt}`);
   }
 }
 

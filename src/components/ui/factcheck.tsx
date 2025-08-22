@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { toast } from "sonner"
@@ -10,12 +10,15 @@ export function FactCheck({ open, onOpenChange, content, onResult, cachedResult 
     const [checking, setChecking] = useState(false)
     const [result, setResult] = useState("")
 
+    const onResultCallback = useCallback(onResult, [])
+    const onOpenChangeCallback = useCallback(onOpenChange, [])
+
     useEffect(() => {
         const run = async () => {
             if (!open || !content) return
             if (cachedResult) {
                 setResult(cachedResult)
-                onResult(cachedResult)
+                onResultCallback(cachedResult)
                 return
             }
 
@@ -30,10 +33,10 @@ export function FactCheck({ open, onOpenChange, content, onResult, cachedResult 
                 })
                 const data = await res.json()
                 setResult(data.result)
-                onResult(data.result)
+                onResultCallback(data.result)
             } catch (error) {
                 console.error("Error fetching fact check:", error)
-                onOpenChange(false)
+                onOpenChangeCallback(false)
                 toast.error("ファクトチェック中にエラーが発生しました。ご時間を開けて再度お試しください。")
             } finally {
                 setChecking(false)
@@ -41,7 +44,7 @@ export function FactCheck({ open, onOpenChange, content, onResult, cachedResult 
         }
 
         run()
-    }, [open, content, cachedResult, onOpenChange, onResult])
+    }, [open, content, cachedResult, onResultCallback, onOpenChangeCallback])
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -51,7 +54,7 @@ export function FactCheck({ open, onOpenChange, content, onResult, cachedResult 
                     <DialogDescription>AIが生成した文章が正確かどうかチェックします。</DialogDescription>
                 </DialogHeader>
                 <div className="whitespace-pre-wrap text-sm text-neutral-800">
-                    <div className="max-h-30 overflow-y-auto border border-neutral-200 p-2 rounded-md">
+                    <div className="max-h-35 overflow-y-auto border border-neutral-200 p-2 rounded-md">
                         {checking ? "チェック中・・・" : result}
                     </div>
 
@@ -59,7 +62,7 @@ export function FactCheck({ open, onOpenChange, content, onResult, cachedResult 
                         <AlertCircleIcon />
                         <AlertTitle>ファクトチェックについて</AlertTitle>
                         <AlertDescription>
-                            <p>ファクトチェックはDuckDuckGo Instant Answer API、Geminiによって行われます。</p>
+                            <p>ファクトチェックはサーチを通じて行われます。信憑性はちょっと上がる程度です。</p>
                         </AlertDescription>
                     </Alert>
                 </div>
