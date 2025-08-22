@@ -99,7 +99,7 @@ export function Ask() {
         return () => clearTimeout(timer)
     }, [charIndex, isDeleting, placeholderIndex])
 
-    const Icon = ({ icon: Icon, className }: { icon?: React.ComponentType<any>, className?: string }) => {
+    const Icon = ({ icon: Icon, className }: { icon?: React.ComponentType<Record<string, unknown>>, className?: string }) => {
         if (!Icon) return null
         return <Icon className={className} />
     }

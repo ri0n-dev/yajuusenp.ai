@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { toast } from "sonner"
@@ -10,15 +10,12 @@ export function FactCheck({ open, onOpenChange, content, onResult, cachedResult 
     const [checking, setChecking] = useState(false)
     const [result, setResult] = useState("")
 
-    const onResultCallback = useCallback(onResult, [])
-    const onOpenChangeCallback = useCallback(onOpenChange, [])
-
     useEffect(() => {
         const run = async () => {
             if (!open || !content) return
             if (cachedResult) {
                 setResult(cachedResult)
-                onResultCallback(cachedResult)
+                onResult(cachedResult)
                 return
             }
 
@@ -33,10 +30,10 @@ export function FactCheck({ open, onOpenChange, content, onResult, cachedResult 
                 })
                 const data = await res.json()
                 setResult(data.result)
-                onResultCallback(data.result)
+                onResult(data.result)
             } catch (error) {
                 console.error("Error fetching fact check:", error)
-                onOpenChangeCallback(false)
+                onOpenChange(false)
                 toast.error("ファクトチェック中にエラーが発生しました。ご時間を開けて再度お試しください。")
             } finally {
                 setChecking(false)
@@ -44,7 +41,8 @@ export function FactCheck({ open, onOpenChange, content, onResult, cachedResult 
         }
 
         run()
-    }, [open, content, cachedResult, onResultCallback, onOpenChangeCallback])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open, content, cachedResult])
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
