@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     const iso = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Tokyo" })).toISOString();
 
     const chat = await openai.chat.completions.create({
-        model: "gpt-5-2025-08-07",
+        model: "gpt-5-mini-2025-08-07",
         messages:
             [
                 { role: "system", content: `${charaPrompt}\n\n現在は日本時間で ${humanReadable}（ISO: ${iso}）です。` },
