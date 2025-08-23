@@ -15,6 +15,7 @@ type ConversationState = {
   messages: Message[];
   addMessage: (content: string, role: "user" | "ai", isThinking?: boolean, prompt?: string) => void;
   removeThinkingMessage: () => void;
+  clearConversation: () => void;
 };
 
 let idCounter = 0;
@@ -36,6 +37,12 @@ export const useConversationStore = create<ConversationState>((set) => ({
   removeThinkingMessage: () => {
     set((state) => ({
       messages: state.messages.filter((m) => !m.isThinking),
+    }));
+  },
+
+  clearConversation: () => {
+    set(() => ({
+      messages: [],
     }));
   },
 }));

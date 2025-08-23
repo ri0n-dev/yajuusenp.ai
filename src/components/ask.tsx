@@ -35,7 +35,7 @@ const prompts = [
 ]
 
 export function Ask() {
-    const { addMessage, removeThinkingMessage } = useConversationStore()
+    const { addMessage, removeThinkingMessage, messages } = useConversationStore()
     const [input, setInput] = useState("")
     const [selectedModel, setSelectedModel] = useState("gpt-5-mini-2025-08-07")
     const [selectedPrompt, setSelectedPrompt] = useState("yajuu")
@@ -142,6 +142,7 @@ export function Ask() {
                     message: messageToSend,
                     model: selectedModel,
                     prompt: selectedPrompt,
+                    history: messages.filter(m => !m.isThinking && m.content !== "[stop]"),
                 }),
             })
 
@@ -201,6 +202,7 @@ export function Ask() {
                                 message: messageToSend,
                                 model: selectedModel,
                                 prompt: selectedPrompt,
+                                messages: messages.filter(m => !m.isThinking && m.content !== "[stop]"),
                             }),
                         })
 

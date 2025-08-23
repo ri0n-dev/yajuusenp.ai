@@ -30,13 +30,14 @@ export async function POST(req: NextRequest) {
 
     const username = req.cookies.get("name")?.value || "ユーザー"
 
-    const { message, model, prompt } = await req.json()
+    const { message, model, prompt, history } = await req.json()
 
     console.log("Request data:", {
         hasMessage: !!message,
         messageType: typeof message,
         model,
-        prompt
+        prompt,
+        historyLength: history?.length || 0
     });
 
     if (!message || typeof message !== "string" || message.trim() === "") {
@@ -69,12 +70,30 @@ export async function POST(req: NextRequest) {
     const iso = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Tokyo" })).toISOString();
 
     try {
+        const messages: Array<{ role: "system" | "user" | "assistant", content: string }> = [
+            { role: "system", content: `ユーザーの名前は${username}です。\n\n${charaPrompt}\n\n現在は日本時間で ${humanReadable}（ISO: ${iso}）です。` }
+        ];
+
+        if (history && Array.isArray(history)) {
+            for (const msg of history) {
+                if (msg.content && 
+                    msg.content !== "[thinking]" && 
+                    msg.content !== "[stop]" && 
+                    !msg.isThinking &&
+                    typeof msg.content === "string" &&
+                    msg.content.trim() !== "") {
+                    
+                    const role = msg.sender?.role === "ai" ? "assistant" : "user";
+                    messages.push({ role, content: msg.content });
+                }
+            }
+        }
+
+        messages.push({ role: "user", content: message });
+
         const chat = await openai.chat.completions.create({
             model: model || "gpt-5-mini-2025-08-07",
-            messages: [
-                { role: "system", content: `ユーザーの名前は${username}です。\n\n${charaPrompt}\n\n現在は日本時間で ${humanReadable}（ISO: ${iso}）です。` },
-                { role: "user", content: `${message}` }
-            ],
+            messages,
         });
 
         console.log("Chat response received:", {
