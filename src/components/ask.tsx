@@ -31,6 +31,7 @@ const models = [
 const prompts = [
     { value: "yajuu", label: "野獣先輩" },
     { value: "kona", label: "粉ぷんぷん" },
+    { value: "normal", label: "ノーマル（開発者向け）" },
 ]
 
 export function Ask() {

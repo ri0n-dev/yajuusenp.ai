@@ -5,7 +5,7 @@ import { getSystemPrompt, type PromptType } from "@/prompts"
 
 const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET)
 
-const allowedPrompts: PromptType[] = ["yajuu", "kona"]
+const allowedPrompts: PromptType[] = ["normal", "yajuu", "kona"]
 
 const openai = new OpenAI({
     baseURL: "https://capi.voids.top/v2/",
@@ -24,11 +24,11 @@ async function verify(token: string) {
 
 export async function POST(req: NextRequest) {
     const token = req.cookies.get("auth_token")?.value
-    const user = token ? await verify(token) : null
-
-    if (!user) {
+    if (!(token && await verify(token))) {
         return new NextResponse("Unauthorized - Agreement required", { status: 401 })
     }
+
+    const username = req.cookies.get("name")?.value || "ユーザー"
 
     const { message, model, prompt } = await req.json()
 
@@ -72,8 +72,8 @@ export async function POST(req: NextRequest) {
         const chat = await openai.chat.completions.create({
             model: model || "gpt-5-mini-2025-08-07",
             messages: [
-                { role: "system", content: `${charaPrompt}\n\n現在は日本時間で ${humanReadable}（ISO: ${iso}）です。` },
-                { role: "user", content: `${user.name} ${message}` }
+                { role: "system", content: `ユーザーの名前は${username}です。\n\n${charaPrompt}\n\n現在は日本時間で ${humanReadable}（ISO: ${iso}）です。` },
+                { role: "user", content: `${message}` }
             ],
         });
 
@@ -89,14 +89,14 @@ export async function POST(req: NextRequest) {
             return new NextResponse("No response from AI", { status: 500 });
         }
 
-        const result = chat.choices[0].message.content;
+        let result = chat.choices[0].message.content;
 
         if (!result) {
             console.error("Empty content in response");
             return new NextResponse("Empty response from AI", { status: 500 });
         }
 
-        console.log("Returning result:", { resultLength: result.length });
+        result = result.replace(/\[thinking\]([\s\S]*?)\[\/thinking\]/g, "")
         return NextResponse.json({ result });
 
     } catch (error) {

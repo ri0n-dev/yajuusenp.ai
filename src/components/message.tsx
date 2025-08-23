@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { UserRound, Share2, Search, SearchCheck, Check, Copy } from "lucide-react"
+import { UserRound, Share2, Search, SearchCheck, Check, Copy, Bot } from "lucide-react"
 import { TooltipContent, Tooltip, TooltipTrigger } from "@/components/ui/tooltip"
 import { toast } from "sonner"
 import { useConversationStore } from "@/store/conversation"
@@ -79,7 +79,7 @@ export function Message() {
                 };
             default:
                 return {
-                    avatar: "/assets/yajuu.webp",
+                    avatar: null,
                     name: "AI",
                     fallback: "AI"
                 };
@@ -104,214 +104,216 @@ export function Message() {
     return (
         <>
             <div className={`${messages.length === 0 ? "block" : "hidden"} text-center text-gray-500 py-20`}>
-                    <p>こんにちは, {name}</p>
-                    <p>伝説に残る会話を始めよう</p>
-                </div>
+                <p>こんにちは, {name}</p>
+                <p>伝説に残る会話を始めよう</p>
+            </div>
 
-                <div
-                    className={`${messages.length === 0 ? "hidden" : "block"} flex-1 overflow-y-auto py-10 space-y-4 relative`}
-                >
-                    {messages.map((message) => {
-                        const isCopied = copiedStates[message.id] || false
-                        if (message.sender.role === "user") {
-                            return (
-                                <div key={message.id} className="flex gap-3 flex-row-reverse">
-                                    <div className="flex items-center justify-center bg-neutral-50 rounded-full w-8 h-8 md:w-10 md:h-10 flex-shrink-0">
-                                        <UserRound className="w-4 h-4 md:w-5 md:h-5" />
+            <div
+                className={`${messages.length === 0 ? "hidden" : "block"} flex-1 overflow-y-auto py-10 space-y-4 relative`}
+            >
+                {messages.map((message) => {
+                    const isCopied = copiedStates[message.id] || false
+                    if (message.sender.role === "user") {
+                        return (
+                            <div key={message.id} className="flex gap-3 flex-row-reverse">
+                                <div className="flex items-center justify-center bg-neutral-50 rounded-full w-8 h-8 md:w-10 md:h-10 flex-shrink-0">
+                                    <UserRound className="w-4 h-4 md:w-5 md:h-5" />
+                                </div>
+
+                                <div className="flex flex-col max-w-[70%] items-end">
+                                    <div className="flex items-center gap-2 mb-1 flex-row-reverse">
+                                        <span className="text-sm font-medium text-gray-700">{name}</span>
+                                        <span className="text-xs text-gray-500">{message.timestamp}</span>
                                     </div>
 
-                                    <div className="flex flex-col max-w-[70%] items-end">
-                                        <div className="flex items-center gap-2 mb-1 flex-row-reverse">
-                                            <span className="text-sm font-medium text-gray-700">{name}</span>
-                                            <span className="text-xs text-gray-500">{message.timestamp}</span>
-                                        </div>
+                                    <div className="flex justify-center rounded-2xl px-4 py-2 bg-neutral-50 text-neutral-900 rounded-br-md">
+                                        <MarkdownRenderer
+                                            content={message.content}
+                                            textAlign="right"
+                                            className="text-sm"
+                                            theme="light"
+                                        />
+                                    </div>
 
-                                        <div className="flex justify-center rounded-2xl px-4 py-2 bg-neutral-50 text-neutral-900 rounded-br-md">
+                                    <div className="flex items-center gap-x-1 mt-1.5 md:mt-2.5">
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    onClick={() => handleCopy(message.id, message.content)}
+                                                    className="hover:bg-neutral-900/3 size-7 transition-all duration-200"
+                                                    size="icon"
+                                                    variant="ghost"
+                                                >
+                                                    <div className="relative">
+                                                        <Copy
+                                                            className={`transition-all duration-200 ${isCopied ? "opacity-0 scale-75" : "opacity-100 scale-100"}`}
+                                                        />
+                                                        <Check
+                                                            className={`absolute inset-0 transition-all duration-200 ${isCopied ? "opacity-100 scale-100" : "opacity-0 scale-75"}`}
+                                                        />
+                                                    </div>
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>コピー</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    } else {
+                        const aiInfo = getAIInfo(message.prompt);
+                        return (
+                            <div key={message.id} className="flex gap-3 flex-row">
+                                <Avatar className="w-10 h-10 flex-shrink-0">
+                                    <AvatarImage src={aiInfo.avatar ?? undefined} alt={aiInfo.name} />
+                                    <AvatarFallback>
+                                        <Bot className="w-5 h-5" />
+                                    </AvatarFallback>
+                                </Avatar>
+
+                                <div className="flex flex-col max-w-[70%] items-start">
+                                    <div className="flex items-center gap-2 mb-1 flex-row">
+                                        <span className="text-sm font-medium text-gray-700">{aiInfo.name}</span>
+                                        <span className="text-xs text-gray-500">{message.timestamp}</span>
+                                    </div>
+
+                                    <div className="flex justify-center rounded-2xl px-4 py-2 bg-neutral-50 text-neutral-900 rounded-br-md">
+                                        {message.content === "[thinking]" ? (
+                                            <div className="flex items-center gap-2 py-2 text-gray-500">
+                                                <div className="flex space-x-1">
+                                                    <div className="w-2 h-2 bg-neutral-200 rounded-full animate-bounce"></div>
+                                                    <div
+                                                        className="w-2 h-2 bg-neutral-200 rounded-full animate-bounce"
+                                                        style={{ animationDelay: "0.1s" }}
+                                                    ></div>
+                                                    <div
+                                                        className="w-2 h-2 bg-neutral-200 rounded-full animate-bounce"
+                                                        style={{ animationDelay: "0.2s" }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        ) : message.content === "[stop]" ? (
+                                            <div className="flex items-center gap-2 py-2">
+                                                <span className="text-sm">Error: エラーが発生しました。もう一度お試しください。</span>
+                                            </div>
+                                        ) : (
                                             <MarkdownRenderer
                                                 content={message.content}
-                                                textAlign="right"
+                                                textAlign="left"
                                                 className="text-sm"
                                                 theme="light"
                                             />
-                                        </div>
-
-                                        <div className="flex items-center gap-x-1 mt-1.5 md:mt-2.5">
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Button
-                                                        onClick={() => handleCopy(message.id, message.content)}
-                                                        className="hover:bg-neutral-900/3 size-7 transition-all duration-200"
-                                                        size="icon"
-                                                        variant="ghost"
-                                                    >
-                                                        <div className="relative">
-                                                            <Copy
-                                                                className={`transition-all duration-200 ${isCopied ? "opacity-0 scale-75" : "opacity-100 scale-100"}`}
-                                                            />
-                                                            <Check
-                                                                className={`absolute inset-0 transition-all duration-200 ${isCopied ? "opacity-100 scale-100" : "opacity-0 scale-75"}`}
-                                                            />
-                                                        </div>
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>コピー</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </div>
+                                        )}
                                     </div>
-                                </div>
-                            )
-                        } else {
-                            const aiInfo = getAIInfo(message.prompt);
-                            return (
-                                <div key={message.id} className="flex gap-3 flex-row">
-                                    <Avatar className="w-10 h-10 flex-shrink-0">
-                                        <AvatarImage src={aiInfo.avatar} alt={aiInfo.name} />
-                                        <AvatarFallback>{aiInfo.fallback}</AvatarFallback>
-                                    </Avatar>
 
-                                    <div className="flex flex-col max-w-[70%] items-start">
-                                        <div className="flex items-center gap-2 mb-1 flex-row">
-                                            <span className="text-sm font-medium text-gray-700">{aiInfo.name}</span>
-                                            <span className="text-xs text-gray-500">{message.timestamp}</span>
-                                        </div>
-
-                                        <div className="flex justify-center rounded-2xl px-4 py-2 bg-neutral-50 text-neutral-900 rounded-br-md">
-                                            {message.content === "[thinking]" ? (
-                                                <div className="flex items-center gap-2 py-2 text-gray-500">
-                                                    <div className="flex space-x-1">
-                                                        <div className="w-2 h-2 bg-neutral-200 rounded-full animate-bounce"></div>
-                                                        <div
-                                                            className="w-2 h-2 bg-neutral-200 rounded-full animate-bounce"
-                                                            style={{ animationDelay: "0.1s" }}
-                                                        ></div>
-                                                        <div
-                                                            className="w-2 h-2 bg-neutral-200 rounded-full animate-bounce"
-                                                            style={{ animationDelay: "0.2s" }}
-                                                        ></div>
+                                    <div className="flex items-center gap-x-1 mt-1.5 md:mt-2.5">
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    disabled={isThinking}
+                                                    onClick={() => handleCopy(message.id, message.content)}
+                                                    className="hover:bg-neutral-900/3 size-7 transition-all duration-200"
+                                                    size="icon"
+                                                    variant="ghost"
+                                                >
+                                                    <div className="relative">
+                                                        <Copy
+                                                            className={`transition-all duration-200 ${isCopied ? "opacity-0 scale-75" : "opacity-100 scale-100"}`}
+                                                        />
+                                                        <Check
+                                                            className={`absolute inset-0 transition-all duration-200 ${isCopied ? "opacity-100 scale-100" : "opacity-0 scale-75"}`}
+                                                        />
                                                     </div>
-                                                </div>
-                                            ) : message.content === "[stop]" ? (
-                                                <div className="flex items-center gap-2 py-2">
-                                                    <span className="text-sm">Error: エラーが発生しました。もう一度お試しください。</span>
-                                                </div>
-                                            ) : (
-                                                <MarkdownRenderer
-                                                    content={message.content}
-                                                    textAlign="left"
-                                                    className="text-sm"
-                                                    theme="light"
-                                                />
-                                            )}
-                                        </div>
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>コピー</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    disabled={isThinking}
+                                                    onClick={() => (setFactTarget(message.content), setIsFactOpen(true))}
+                                                    className="hover:bg-neutral-900/3 size-7"
+                                                    size="icon"
+                                                    variant="ghost"
+                                                >
+                                                    {factChecked[message.content] ? <SearchCheck /> : <Search />}
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>ファクトチェック</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    disabled={isThinking}
+                                                    onClick={async () => {
+                                                        const jsonStr = JSON.stringify(
+                                                            messages.map((m) => ({
+                                                                role: m.sender.role,
+                                                                model: "Yajuu 4o",
+                                                                timestamp: m.timestamp,
+                                                                content: m.content,
+                                                            })),
+                                                        )
 
-                                        <div className="flex items-center gap-x-1 mt-1.5 md:mt-2.5">
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Button
-                                                        disabled={isThinking}
-                                                        onClick={() => handleCopy(message.id, message.content)}
-                                                        className="hover:bg-neutral-900/3 size-7 transition-all duration-200"
-                                                        size="icon"
-                                                        variant="ghost"
-                                                    >
-                                                        <div className="relative">
-                                                            <Copy
-                                                                className={`transition-all duration-200 ${isCopied ? "opacity-0 scale-75" : "opacity-100 scale-100"}`}
-                                                            />
-                                                            <Check
-                                                                className={`absolute inset-0 transition-all duration-200 ${isCopied ? "opacity-100 scale-100" : "opacity-0 scale-75"}`}
-                                                            />
-                                                        </div>
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>コピー</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Button
-                                                        disabled={isThinking}
-                                                        onClick={() => (setFactTarget(message.content), setIsFactOpen(true))}
-                                                        className="hover:bg-neutral-900/3 size-7"
-                                                        size="icon"
-                                                        variant="ghost"
-                                                    >
-                                                        {factChecked[message.content] ? <SearchCheck /> : <Search />}
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>ファクトチェック</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Button
-                                                        disabled={isThinking}
-                                                        onClick={async () => {
-                                                            const jsonStr = JSON.stringify(
-                                                                messages.map((m) => ({
-                                                                    role: m.sender.role,
-                                                                    model: "Yajuu 4o",
-                                                                    timestamp: m.timestamp,
-                                                                    content: m.content,
-                                                                })),
-                                                            )
+                                                        const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, [
+                                                            "encrypt",
+                                                        ])
+                                                        const rawKey = await crypto.subtle.exportKey("raw", key)
+                                                        const keyStr = btoa(String.fromCharCode(...new Uint8Array(rawKey)))
 
-                                                            const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, [
-                                                                "encrypt",
-                                                            ])
-                                                            const rawKey = await crypto.subtle.exportKey("raw", key)
-                                                            const keyStr = btoa(String.fromCharCode(...new Uint8Array(rawKey)))
+                                                        const iv = crypto.getRandomValues(new Uint8Array(12))
+                                                        const encoded = new TextEncoder().encode(jsonStr)
+                                                        const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoded)
+                                                        const combined = new Uint8Array(iv.length + encrypted.byteLength)
+                                                        combined.set(iv)
+                                                        combined.set(new Uint8Array(encrypted), iv.length)
+                                                        const encryptedStr = btoa(String.fromCharCode(...combined))
 
-                                                            const iv = crypto.getRandomValues(new Uint8Array(12))
-                                                            const encoded = new TextEncoder().encode(jsonStr)
-                                                            const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoded)
-                                                            const combined = new Uint8Array(iv.length + encrypted.byteLength)
-                                                            combined.set(iv)
-                                                            combined.set(new Uint8Array(encrypted), iv.length)
-                                                            const encryptedStr = btoa(String.fromCharCode(...combined))
-
-                                                            const url = `${location.origin}/share?d=${encodeURIComponent(encryptedStr)}&k=${encodeURIComponent(keyStr)}`
-                                                            setShareUrl(url)
-                                                            setIsShareOpen(true)
-                                                        }}
-                                                        className="hover:bg-neutral-900/3 size-7"
-                                                        size="icon"
-                                                        variant="ghost"
-                                                    >
-                                                        <Share2 />
-                                                    </Button>
-                                                </TooltipTrigger>
-                                                <TooltipContent>
-                                                    <p>共有</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </div>
+                                                        const url = `${location.origin}/share?d=${encodeURIComponent(encryptedStr)}&k=${encodeURIComponent(keyStr)}`
+                                                        setShareUrl(url)
+                                                        setIsShareOpen(true)
+                                                    }}
+                                                    className="hover:bg-neutral-900/3 size-7"
+                                                    size="icon"
+                                                    variant="ghost"
+                                                >
+                                                    <Share2 />
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>共有</p>
+                                            </TooltipContent>
+                                        </Tooltip>
                                     </div>
                                 </div>
-                            )
-                        }
-                    })}
-                    <FactCheck
-                        open={isFactOpen}
-                        onOpenChange={(open) => {
-                            if (!open) setFactTarget("")
-                            setIsFactOpen(open)
-                        }}
-                        content={factTarget}
-                        onResult={(result) => {
-                            setFactChecked((prev) => ({ ...prev, [factTarget]: result }))
-                        }}
-                        cachedResult={factChecked[factTarget]}
-                    />
-                    <ShareDialog open={isShareOpen} onOpenChange={setIsShareOpen} url={shareUrl} />
-                    <div ref={bottomRef} />
+                            </div>
+                        )
+                    }
+                })}
+                <FactCheck
+                    open={isFactOpen}
+                    onOpenChange={(open) => {
+                        if (!open) setFactTarget("")
+                        setIsFactOpen(open)
+                    }}
+                    content={factTarget}
+                    onResult={(result) => {
+                        setFactChecked((prev) => ({ ...prev, [factTarget]: result }))
+                    }}
+                    cachedResult={factChecked[factTarget]}
+                />
+                <ShareDialog open={isShareOpen} onOpenChange={setIsShareOpen} url={shareUrl} />
+                <div ref={bottomRef} />
 
-                    <div className="fixed bottom-0 left-0 right-0 h-32 pointer-events-none bg-gradient-to-t from-white via-white/80 to-transparent" />
-                </div>
-            </>
+                <div className="fixed bottom-0 left-0 right-0 h-32 pointer-events-none bg-gradient-to-t from-white via-white/80 to-transparent" />
+            </div>
+        </>
     )
 }
