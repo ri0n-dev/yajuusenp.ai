@@ -8,7 +8,7 @@ import { Copy, TriangleAlert } from "lucide-react"
 export function ShareDialog({ open, onOpenChange, url }: { open: boolean, onOpenChange: (v: boolean) => void, url: string }) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[450px]">
                 <DialogHeader>
                     <DialogTitle>シェア</DialogTitle>
                     <DialogDescription>リンクへアクセスすることで会話を共有できます。</DialogDescription>
@@ -20,11 +20,11 @@ export function ShareDialog({ open, onOpenChange, url }: { open: boolean, onOpen
                     </Button>
                 </div>
 
-                <Alert className="mt-2">
+                <Alert>
                     <TriangleAlert />
                     <AlertTitle>注意</AlertTitle>
                     <AlertDescription>
-                        <p>会話内容を暗号化し、直接リンクに含める仕組みになっています。そのため、リンクは削除することができません。共有は責任を持って行ってください。</p>
+                        <p>会話内容を暗号化し、URLを短縮させています。リンクは削除することができません。共有は責任を持って行ってください。</p>
                     </AlertDescription>
                 </Alert>
             </DialogContent>

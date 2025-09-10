@@ -15,7 +15,7 @@ type ConversationState = {
   messages: Message[];
   addMessage: (content: string, role: "user" | "ai", isThinking?: boolean, prompt?: string) => void;
   removeThinkingMessage: () => void;
-  clearConversation: () => void;
+  setMessages: (messages: Message[]) => void;
 };
 
 let idCounter = 0;
@@ -40,9 +40,9 @@ export const useConversationStore = create<ConversationState>((set) => ({
     }));
   },
 
-  clearConversation: () => {
+  setMessages: (messages) => {
     set(() => ({
-      messages: [],
+      messages,
     }));
   },
 }));

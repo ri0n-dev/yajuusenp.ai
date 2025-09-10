@@ -7,7 +7,7 @@ const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET)
 
 const allowedPrompts: PromptType[] = ["normal", "yajuu", "kona"]
 
-const openai = new OpenAI({
+const voids = new OpenAI({
     baseURL: "https://capi.voids.top/v2/",
     apiKey: "no_api_key_needed",
 })
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
 
         messages.push({ role: "user", content: message });
 
-        const chat = await openai.chat.completions.create({
+        const chat = await voids.chat.completions.create({
             model: model || "gpt-5-mini-2025-08-07",
             messages,
         });

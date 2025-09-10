@@ -8,7 +8,7 @@ export function Info() {
     return (
         <>
             <Button variant="outline" className="fixed bottom-6 right-16 h-14 w-14 rounded-full size-8 border border-neutral-200 shadow-none">
-                <Link href="https://discord.gg/teamzisty" target="_blank" rel="noopener noreferrer" className="text-neutral-800">
+                <Link href="https://discord.gg/6BPfVm6cST" target="_blank" rel="noopener noreferrer" className="text-neutral-800">
                     <SiDiscord className="w-4 h-4" />
                 </Link>
             </Button>
@@ -22,7 +22,7 @@ export function Info() {
                     <DialogHeader>
                         <DialogTitle className="text-left">Yajuusenp.AI</DialogTitle>
                         <p className="text-sm text-neutral-800 text-left">このサイトは野獣先輩と会話するという夢を持っている人たちのために作られました。
-                            何か問題や要望、ご意見などあれば<a href="https://discord.gg/teamzisty" target="_blank" rel="noopener noreferrer" className="text-primary underline">Discord</a>からお願いします</p>
+                            何か問題や要望、ご意見などあれば<a href="https://discord.gg/6BPfVm6cST" target="_blank" rel="noopener noreferrer" className="text-primary underline">Discord</a>からお願いします</p>
 
                         <div className="mt-3 text-left">
                             <h3 className="text-base font-semibold mb-1">Project Member</h3>

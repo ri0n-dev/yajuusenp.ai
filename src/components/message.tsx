@@ -69,12 +69,14 @@ export function Message() {
                 return {
                     avatar: "/assets/yajuu.webp",
                     name: "野獣先輩",
+                    id: "yajuu",
                     fallback: "YJ"
                 };
             case "kona":
                 return {
                     avatar: "/assets/kona.webp",
                     name: "粉ぷんぷん",
+                    id: "kona",
                     fallback: "KP"
                 };
             default:
@@ -253,32 +255,55 @@ export function Message() {
                                                 <Button
                                                     disabled={isThinking}
                                                     onClick={async () => {
-                                                        const jsonStr = JSON.stringify(
-                                                            messages.map((m) => ({
-                                                                role: m.sender.role,
-                                                                model: "Yajuu 4o",
-                                                                timestamp: m.timestamp,
-                                                                content: m.content,
-                                                            })),
-                                                        )
+                                                        try {
+                                                            toast("共有URLを生成中・・・")
 
-                                                        const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, [
-                                                            "encrypt",
-                                                        ])
-                                                        const rawKey = await crypto.subtle.exportKey("raw", key)
-                                                        const keyStr = btoa(String.fromCharCode(...new Uint8Array(rawKey)))
+                                                            const jsonStr = JSON.stringify(
+                                                                messages.map((m) => ({
+                                                                    role: m.sender.role,
+                                                                    prompt: m.prompt,
+                                                                    timestamp: m.timestamp,
+                                                                    content: m.content,
+                                                                })),
+                                                            )
 
-                                                        const iv = crypto.getRandomValues(new Uint8Array(12))
-                                                        const encoded = new TextEncoder().encode(jsonStr)
-                                                        const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoded)
-                                                        const combined = new Uint8Array(iv.length + encrypted.byteLength)
-                                                        combined.set(iv)
-                                                        combined.set(new Uint8Array(encrypted), iv.length)
-                                                        const encryptedStr = btoa(String.fromCharCode(...combined))
+                                                            const key = await crypto.subtle.generateKey({ name: "AES-GCM", length: 256 }, true, [
+                                                                "encrypt",
+                                                            ])
+                                                            const rawKey = await crypto.subtle.exportKey("raw", key)
+                                                            const keyStr = btoa(String.fromCharCode(...new Uint8Array(rawKey)))
 
-                                                        const url = `${location.origin}/share?d=${encodeURIComponent(encryptedStr)}&k=${encodeURIComponent(keyStr)}`
-                                                        setShareUrl(url)
-                                                        setIsShareOpen(true)
+                                                            const iv = crypto.getRandomValues(new Uint8Array(12))
+                                                            const encoded = new TextEncoder().encode(jsonStr)
+                                                            const encrypted = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, encoded)
+                                                            const combined = new Uint8Array(iv.length + encrypted.byteLength)
+                                                            combined.set(iv)
+                                                            combined.set(new Uint8Array(encrypted), iv.length)
+                                                            const encryptedStr = btoa(String.fromCharCode(...combined))
+
+                                                            const url = `${location.origin}/?d=${encodeURIComponent(encryptedStr)}&k=${encodeURIComponent(keyStr)}`
+
+                                                            const res = await fetch("/api/short", {
+                                                                method: "POST",
+                                                                headers: {
+                                                                    "Content-Type": "application/json",
+                                                                },
+                                                                body: JSON.stringify({ url }),
+                                                            })
+
+                                                            if (res.ok) {
+                                                                const shortData = await res.json()
+                                                                setShareUrl(shortData.shorturl)
+                                                            } else {
+                                                                setShareUrl(url)
+                                                            }
+
+                                                            setIsShareOpen(true)
+                                                            toast("共有URLの生成完了✓")
+                                                        } catch (error) {
+                                                            console.error("Error creating share URL:", error)
+                                                            toast.error("共有URLの作成中にエラーが発生しました。")
+                                                        }
                                                     }}
                                                     className="hover:bg-neutral-900/3 size-7"
                                                     size="icon"
