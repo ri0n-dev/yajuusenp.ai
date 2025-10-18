@@ -9,8 +9,8 @@ const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET)
 const allowedPrompts: PromptType[] = ["normal", "yajuu", "kona"]
 
 const voids = new OpenAI({
-    baseURL: process.env.API_URL,
-    apiKey: process.env.API_KEY,
+    baseURL: "https://hcap.ai/v1",
+    apiKey: process.env.Hcap_key,
 })
 
 async function verify(token: string) {

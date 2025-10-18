@@ -40,7 +40,7 @@ export function ConversationLoader() {
           const messagesData = JSON.parse(jsonStr);
 
           let idCounter = 0;
-          const messages = messagesData.map((msg: any) => ({
+          const messages = messagesData.map((msg: { content: string; role: "user" | "ai"; timestamp: string; prompt?: string }) => ({
             id: `${Date.now()}-${++idCounter}`,
             content: msg.content,
             sender: { role: msg.role },
