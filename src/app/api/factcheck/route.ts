@@ -5,9 +5,9 @@ import { rateLimit, getRateLimitHeaders } from "@/lib/rate-limit"
 
 const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET)
 
-const openai = new OpenAI({
-    baseURL: "https://capi.voids.top/v2",
-    apiKey: "no_api_key_needed",
+const voids = new OpenAI({
+    baseURL: "https://capi.voids.top/v2/",
+    apiKey: "yajuu_no_kokoro_no_naka_ni_aru_sa_www",
 })
 
 async function verify(token: string) {
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
         const humanReadable = formatter.format(now).replace("曜日", "）").replace(/^(.+?)（/, "$1（");
         const iso = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Tokyo" })).toISOString();
 
-        const soner = await openai.chat.completions.create({
+        const soner = await voids.chat.completions.create({
             model: "sonar-pro",
             messages: [
                 {
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
         });
 
         const result = soner.choices[0].message.content
-        
+
         const headers = getRateLimitHeaders(req)
         return NextResponse.json({ result }, { headers })
     } catch (error: unknown) {
