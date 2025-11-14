@@ -9,8 +9,8 @@ const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET)
 const allowedPrompts: PromptType[] = ["normal", "yajuu", "kona"]
 
 const voids = new OpenAI({
-    baseURL: "https://hcap.ai/v1",
-    apiKey: process.env.Hcap_key,
+    baseURL: "https://capi.voids.top/v2/",
+    apiKey: "yajuu_no_kokoro_no_naka_ni_aru_sa_www",
 })
 
 async function verify(token: string) {
@@ -82,13 +82,13 @@ export async function POST(req: NextRequest) {
 
         if (history && Array.isArray(history)) {
             for (const msg of history) {
-                if (msg.content && 
-                    msg.content !== "[thinking]" && 
-                    msg.content !== "[stop]" && 
+                if (msg.content &&
+                    msg.content !== "[thinking]" &&
+                    msg.content !== "[stop]" &&
                     !msg.isThinking &&
                     typeof msg.content === "string" &&
                     msg.content.trim() !== "") {
-                    
+
                     const role = msg.sender?.role === "ai" ? "assistant" : "user";
                     messages.push({ role, content: msg.content });
                 }
@@ -98,8 +98,9 @@ export async function POST(req: NextRequest) {
         messages.push({ role: "user", content: message });
 
         const chat = await voids.chat.completions.create({
-            model: model || "gpt-5-mini",
+            model: model || "gpt-4o-mini",
             messages,
+            max_tokens: 4096,
         });
 
         console.log("Chat response received:", {
@@ -122,7 +123,7 @@ export async function POST(req: NextRequest) {
         }
 
         result = result.replace(/\[thinking\]([\s\S]*?)\[\/thinking\]/g, "")
-        
+
         const headers = getRateLimitHeaders(req)
         return NextResponse.json({ result }, { headers });
 
