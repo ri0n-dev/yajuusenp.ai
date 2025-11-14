@@ -7,7 +7,7 @@ const SECRET = new TextEncoder().encode(process.env.AUTH_SECRET)
 
 const voids = new OpenAI({
     baseURL: "https://capi.voids.top/v2/",
-    apiKey: "yajuu_no_kokoro_no_naka_ni_aru_sa_www",
+    apiKey: "yajuu_no_kokoro_no_naka_ni_aru_kamo_www",
 })
 
 async function verify(token: string) {
