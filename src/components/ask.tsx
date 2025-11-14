@@ -35,7 +35,7 @@ const prompts = [
 export function Ask() {
     const { addMessage, removeThinkingMessage, messages } = useConversationStore()
     const [input, setInput] = useState("")
-    const [selectedModel, setSelectedModel] = useState("grok-4-fast-non-reasoning")
+    const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash-lite")
     const [selectedPrompt, setSelectedPrompt] = useState("yajuu")
     const [currentPlaceholder, setCurrentPlaceholder] = useState("")
     const [placeholderIndex, setPlaceholderIndex] = useState(0)
