@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -23,8 +21,7 @@ const placeholders = [
 
 const models = [
     { value: "gpt-4o", label: "GPT-4o (OpenAI)", icon: SiOpenai },
-    { value: "gpt-5", label: "GPT-5 (OpenAI)", icon: SiOpenai },
-    { value: "gpt-5-mini", label: "GPT-5-mini (OpenAI)", icon: SiOpenai },
+    { value: "gpt-5-chat", label: "GPT-5 (OpenAI)", icon: SiOpenai },
     { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash (Google)", icon: SiGooglegemini },
 ]
 
