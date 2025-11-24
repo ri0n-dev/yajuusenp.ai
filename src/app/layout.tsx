@@ -1,4 +1,4 @@
-import { Analytics } from "@vercel/analytics/next"
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { Noto_Sans_JP } from "next/font/google";
 import { Toaster } from "sonner"
 import "@/styles/globals.css";
@@ -21,7 +21,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </div>
 
         <Toaster className="shadow-none border border-neutral-200" position="top-center" />
-        <Analytics />
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
       </body>
     </html>
   );

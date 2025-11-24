@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -10,7 +8,7 @@ import { toast } from "sonner"
 import { TermsAlert } from "@/components/ui/terms"
 import { NameDialog } from "@/components/ui/name"
 import { ArrowUp, Key, Loader, Bot } from "lucide-react"
-import { SiOpenai, SiGooglegemini } from "@icons-pack/react-simple-icons"
+import { SiX, SiGooglegemini } from "@icons-pack/react-simple-icons"
 
 const placeholders = [
     "野獣先輩のアソコの長さを教えて",
@@ -22,10 +20,10 @@ const placeholders = [
 ]
 
 const models = [
-    { value: "gpt-4o", label: "GPT-4o (OpenAI)", icon: SiOpenai },
-    { value: "gpt-5", label: "GPT-5 (OpenAI)", icon: SiOpenai },
-    { value: "gpt-5-mini", label: "GPT-5-mini (OpenAI)", icon: SiOpenai },
+    { value: "grok-4", label: "Grok 4 (xAI)", icon: SiX },
+    { value: "grok-4-fast-non-reasoning", label: "Grok 4 Fast (xAI)", icon: SiX },
     { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash (Google)", icon: SiGooglegemini },
+    { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash Lite (Google)", icon: SiGooglegemini },
 ]
 
 const prompts = [
@@ -37,7 +35,7 @@ const prompts = [
 export function Ask() {
     const { addMessage, removeThinkingMessage, messages } = useConversationStore()
     const [input, setInput] = useState("")
-    const [selectedModel, setSelectedModel] = useState("gpt-4o")
+    const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash-lite")
     const [selectedPrompt, setSelectedPrompt] = useState("yajuu")
     const [currentPlaceholder, setCurrentPlaceholder] = useState("")
     const [placeholderIndex, setPlaceholderIndex] = useState(0)
