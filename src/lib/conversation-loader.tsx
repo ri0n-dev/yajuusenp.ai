@@ -1,19 +1,25 @@
 "use client"
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useConversationStore } from '@/store/conversation';
 import { toast } from 'sonner';
 
 export function ConversationLoader() {
   const { setMessages } = useConversationStore();
+  const hasLoadedRef = useRef(false);
 
   useEffect(() => {
+    if (hasLoadedRef.current) {
+      return;
+    }
+
     const loadSharedConversation = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const encryptedData = urlParams.get('d');
       const keyStr = urlParams.get('k');
 
       if (encryptedData && keyStr) {
+        hasLoadedRef.current = true;
         try {
           toast("共有された会話を読み込み中・・・");
 
@@ -49,12 +55,13 @@ export function ConversationLoader() {
           }));
 
           setMessages(messages);
-          toast.success("共有された会話を読み込みました！");
 
           const newUrl = new URL(window.location.href);
           newUrl.searchParams.delete('d');
           newUrl.searchParams.delete('k');
           window.history.replaceState({}, '', newUrl.toString());
+
+          toast.success("共有された会話を読み込みました！");
 
         } catch (error) {
           console.error("Error loading shared conversation:", error);
