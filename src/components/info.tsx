@@ -31,7 +31,7 @@ export function Info() {
                                     <h4 className="flex items-center font-medium text-sm mb-2">Rion <MoveUpRight size={12} /></h4>
                                     <p className="text-xs text-muted-foreground leading-relaxed">創設者、開発者</p>
                                 </Link>
-                                <Link href="https://x.com/tom_3x" target="_blank" rel="noopener noreferrer">
+                                <Link href="https://x.com/tomm_ui" target="_blank" rel="noopener noreferrer">
                                     <h4 className="flex items-center font-medium text-sm mb-2">Tom <MoveUpRight size={12} /></h4>
                                     <p className="text-xs text-muted-foreground leading-relaxed">共同創設者、アイデア</p>
                                 </Link>
