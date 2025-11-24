@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
         messages.push({ role: "user", content: message });
 
         const chat = await voids.chat.completions.create({
-            model: model || "gpt-4o-mini",
+            model: model || "deepseek-v3.2",
             messages,
             max_tokens: 4096,
         });

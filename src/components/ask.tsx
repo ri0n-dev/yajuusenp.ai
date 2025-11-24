@@ -8,7 +8,7 @@ import { toast } from "sonner"
 import { TermsAlert } from "@/components/ui/terms"
 import { NameDialog } from "@/components/ui/name"
 import { ArrowUp, Key, Loader, Bot } from "lucide-react"
-import { SiX, SiGooglegemini } from "@icons-pack/react-simple-icons"
+import { SiX, SiOpenai } from "@icons-pack/react-simple-icons"
 
 const placeholders = [
     "野獣先輩のアソコの長さを教えて",
@@ -22,8 +22,9 @@ const placeholders = [
 const models = [
     { value: "grok-4", label: "Grok 4 (xAI)", icon: SiX },
     { value: "grok-4-fast-non-reasoning", label: "Grok 4 Fast (xAI)", icon: SiX },
-    { value: "gemini-2.5-flash", label: "Gemini 2.5 Flash (Google)", icon: SiGooglegemini },
-    { value: "gemini-2.5-flash-lite", label: "Gemini 2.5 Flash Lite (Google)", icon: SiGooglegemini },
+    { value: "gpt-5.1-2025-11-13", label: "GPT-5.1 (OpenAI)", icon: SiOpenai },
+    { value: "gpt-5-mini", label: "GPT-5 mini (OpenAI)", icon: SiOpenai },
+    { value: "gpt-5-nano-2025-08-07", label: "GPT-5 nano (OpenAI)", icon: SiOpenai },
 ]
 
 const prompts = [
@@ -35,7 +36,7 @@ const prompts = [
 export function Ask() {
     const { addMessage, removeThinkingMessage, messages } = useConversationStore()
     const [input, setInput] = useState("")
-    const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash-lite")
+    const [selectedModel, setSelectedModel] = useState("grok-4-fast-non-reasoning")
     const [selectedPrompt, setSelectedPrompt] = useState("yajuu")
     const [currentPlaceholder, setCurrentPlaceholder] = useState("")
     const [placeholderIndex, setPlaceholderIndex] = useState(0)
@@ -252,7 +253,7 @@ export function Ask() {
                             onChange={handleInput}
                             onKeyDown={handleKeyPress}
                             placeholder={currentPlaceholder}
-                            className="w-full px-2 py-2 border-0 focus:outline-none resize-none text-sm md:text-base text-neutral-900 placeholder-neutral-400 leading-6 min-h-[2.5rem] max-h-[150px] overflow-y-auto"
+                            className="w-full px-2 py-2 border-0 focus:outline-none resize-none text-sm md:text-base text-neutral-900 placeholder-neutral-400 leading-6 min-h-10 max-h-[150px] overflow-y-auto"
                             rows={1}
                             disabled={isSending}
                         />
@@ -306,7 +307,7 @@ export function Ask() {
                         </div>
                         <Button
                             className={`
-                                flex-shrink-0 w-10 h-10 rounded-full bg-neutral-50/0 border hover:bg-neutral-100
+                                shrink-0 w-10 h-10 rounded-full bg-neutral-50/0 border hover:bg-neutral-100
                                 ${input.trim().length > 0 ? "border-neutral-200 text-neutral-500/40" : "border-neutral-200 text-neutral-400"}
                                 ${input.trim().length === 0 || isSending ? "cursor-not-allowed" : ""}
                             `}
